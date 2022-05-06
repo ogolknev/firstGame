@@ -11,6 +11,7 @@ const int SCREEN_HEIGHT = 640;
 int run = 1;
 int attackrecharge = 0;
 int angle = 0;
+int dmgchek = 0;
 SDL_Window *mainWindow = NULL;
 SDL_Renderer *mainRender = NULL;
 SDL_Event *mainEvent;
@@ -119,8 +120,15 @@ int calculateEntityMoving(struct object entity, container **headcontainer, int r
 int *calculateTrafficBans(struct object entity, container **headcontainer){
 	container *extcontainer = *headcontainer;
 	int *unmoving = malloc(4*sizeof(int));
+	unmoving[0] = 0;
+	unmoving[1] = 0;
+	unmoving[2] = 0;
+	unmoving[3] = 0;
+	entity.rectangle.x += 8;
+	entity.rectangle.y += 8;
 	for(int i = 0; i < element_count(&extcontainer); i++){
-		if(abs(entity.rectangle.x - getlist(&extcontainer, i)->data.rectangle.x) <= 32 && abs(entity.rectangle.y - getlist(&extcontainer, i)->data.rectangle.y) <= 32){
+		if(abs(entity.rectangle.x - getlist(&extcontainer, i)->data.rectangle.x) <= 32
+		&& abs(entity.rectangle.y - getlist(&extcontainer, i)->data.rectangle.y) <= 32){
 			if(entity.rectangle.x - getlist(&extcontainer, i)->data.rectangle.x == 32){
 				if(entity.rectangle.y == getlist(&extcontainer, i)->data.rectangle.y){
 					unmoving[3] = 4;
@@ -189,15 +197,19 @@ struct object playerMoving(struct object prect, int *trafficbans, const Uint8 *k
 	return prect;
 }
 
-container *attack(struct object attacker, container **headcontainer){
+container *attack(struct object attacker, container **headcontainer, SDL_Texture *effecttexture, SDL_Rect *effectrect){
 	container *extcontainer = *headcontainer;
 	int deathcounter = 0;
 	int counter = 0;
 	for(int i = 0; i < element_count(&extcontainer); i++){
-		if(abs(attacker.rectangle.x - getlist(&extcontainer, i)->data.rectangle.x) <= 32
-		&& abs(attacker.rectangle.y - getlist(&extcontainer, i)->data.rectangle.y) <= 32
-		&& getlist(&extcontainer, i)->data.playerchek != 1){
+		if(abs(attacker.rectangle.x + 8 - getlist(&extcontainer, i)->data.rectangle.x) <= 32
+		&& abs(attacker.rectangle.y + 8 - getlist(&extcontainer, i)->data.rectangle.y) <= 32
+		&& getlist(&extcontainer, i)->data.playerchek != 1 && getlist(&extcontainer, i)->data.LVL != -1){
 			getlist(&extcontainer, i)->data.HP--;
+			dmgchek = 1;
+			effectrect->x = getlist(&extcontainer, i)->data.rectangle.x;
+			effectrect->y = getlist(&extcontainer, i)->data.rectangle.y;
+			SDL_RenderCopy(mainRender, effecttexture, NULL, effectrect);
 			if(getlist(&extcontainer, i)->data.HP == 0){
 				deathcounter++;
 			}
@@ -240,10 +252,15 @@ int main(int argc, char* argv[]){
 
 	SDL_Texture *pTexture = IMG_LoadTexture(mainRender,"Textures/helmet20.png");
 	SDL_Rect prect;
-	prect.h = 41;
-	prect.w = 40;
-	prect.x = bgrect.x + (bgrect.w - prect.w) / 2 - 16;
-	prect.y = bgrect.y + (bgrect.h - prect.h) / 2 - 16;
+	prect.h = 48;
+	prect.w = 48;
+	prect.x = 32 * 10 - 8;
+	prect.y = 32 * 10 - 8;
+
+	SDL_Texture *bloodEffect = IMG_LoadTexture(mainRender,"Textures/blood.png");
+	SDL_Rect bldrect;
+	bldrect.h = 32;
+	bldrect.w = 32;
 
 	SDL_Texture *sTexture = IMG_LoadTexture(mainRender, "Textures/sword.png");
 	SDL_Rect srect;
@@ -301,7 +318,7 @@ int main(int argc, char* argv[]){
 
 	addlast(&objects, enemy);
 
-	multiSpawn(mainRender, &objects, enemy, bgrect, 30);
+	multiSpawn(mainRender, &objects, enemy, bgrect, 40);
 	multiSpawn(mainRender, &objects, stan, bgrect, 40);
 	printf("%i\n", element_count(&objects));
 
@@ -315,7 +332,7 @@ int main(int argc, char* argv[]){
 		SDL_RenderCopy(mainRender, bgTexture, NULL, &bgrect);
 		if(keystate[SDL_SCANCODE_F] && attackrecharge == 0){
 			angle = 0;
-			objects = attack(getlist(&objects, 0)->data, &objects);
+			objects = attack(getlist(&objects, 0)->data, &objects, bloodEffect, &bldrect);
 			attackrecharge = 36;
 		}
 		if(attackrecharge > 0){
@@ -325,12 +342,15 @@ int main(int argc, char* argv[]){
 				srect.y = getlist(&objects, 0)->data.rectangle.y + (getlist(&objects, 0)->data.rectangle.h / 2);
 				SDL_RenderCopyEx(mainRender, sTexture, NULL, &srect , angle, &swordCenter, swordflip);
 			}
-			attackrecharge--;
+			if(angle >= 360) attackrecharge = 0;
 		}
+		if(angle > 180) dmgchek = 0;
+		if(dmgchek == 1) SDL_RenderCopy(mainRender, bloodEffect, NULL, &bldrect);
 		for(int i = 0; i < element_count(&objects); i++){
 			SDL_Rect currentRect = getlistdata(&objects, i).rectangle;
 			SDL_RenderCopy(mainRender, getlistdata(&objects, i).texture, NULL, &currentRect);
 		}
+
 		int *trafficbans = calculateTrafficBans(getlist(&objects, 0)->data, &objects);
 		getlist(&objects, 0)->data = playerMoving(getlist(&objects, 0)->data, trafficbans, keystate);
 		for(int i = 0; i < element_count(&objects); i++){
