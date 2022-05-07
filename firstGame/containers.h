@@ -8,15 +8,36 @@
 #ifndef CONTAINERS_H_
 #define CONTAINERS_H_
 
+struct animation{
+	int angle;
+	int timer[10];
+	SDL_Point center;
+	SDL_Rect animationRect;
+};
+
+struct item{
+	int ID;
+	struct animation animation;
+	int recharge;
+	SDL_Rect rectangle;
+	SDL_Texture *texture;
+};
+
 struct object{
 	int HP;
 	int DMG;
 	int LVL;
-	int moving;
-	int movingchek;
-	_Bool playerchek;
+	int ID;
+	int direction;
+	int restofway;
+	int takendamage;
+	int attackrecharge;
+	struct item weapon;
+	struct animation animation;
+	SDL_Rect damageEffectRect;
+	SDL_Texture *damageEffectTexture;
 	SDL_Rect rectangle;
-	SDL_Texture *texture;
+	SDL_Texture *texture, *death;
 };
 
 typedef struct element{
