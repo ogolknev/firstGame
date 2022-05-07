@@ -205,17 +205,17 @@ container *attack(struct object attacker, container **headcontainer, SDL_Texture
 		if(abs(attacker.rectangle.x + 8 - getlist(&extcontainer, i)->data.rectangle.x) <= 32
 		&& abs(attacker.rectangle.y + 8 - getlist(&extcontainer, i)->data.rectangle.y) <= 32
 		&& getlist(&extcontainer, i)->data.playerchek != 1 && getlist(&extcontainer, i)->data.LVL != -1){
-			getlist(&extcontainer, i)->data.HP--;
+			getlist(&extcontainer, i)->data.HP -= attacker.DMG;
 			dmgchek = 1;
 			effectrect->x = getlist(&extcontainer, i)->data.rectangle.x;
 			effectrect->y = getlist(&extcontainer, i)->data.rectangle.y;
 			SDL_RenderCopy(mainRender, effecttexture, NULL, effectrect);
-			if(getlist(&extcontainer, i)->data.HP == 0){
+			if(getlist(&extcontainer, i)->data.HP <= 0){
 				deathcounter++;
 			}
 		}
 		while(deathcounter != 0){
-			if(getlist(&extcontainer, counter)->data.HP == 0){
+			if(getlist(&extcontainer, counter)->data.HP <= 0 && getlist(&extcontainer, counter)->data.LVL != -1){
 				delelement(&extcontainer, counter);
 				deathcounter--;
 			}
@@ -225,6 +225,49 @@ container *attack(struct object attacker, container **headcontainer, SDL_Texture
 		}
 	}
 	return *headcontainer;
+}
+
+container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
+	container *extcontainer = *headcontainer;
+	printf("%s\n", path);
+	struct object newobject;
+	SDL_Texture *stTexture = IMG_LoadTexture(mainRender,"Textures/stan.png");
+	newobject.rectangle.h = 32;
+	newobject.rectangle.w = 32;
+	FILE *mapinput;
+	mapinput = fopen(path, "r");
+	char objectsymbol;
+	int x = 0;
+	int y = 0;
+	fscanf(mapinput, "%c", &objectsymbol);
+	while(feof(mapinput) == 0){
+		while(objectsymbol != '\\'){
+			printf("s = %c ", objectsymbol);
+			printf("x:%i y:%i\n", x, y);
+			if(objectsymbol == 'x'){
+				newobject.rectangle.x = bgrect.x + x * 32;
+				newobject.rectangle.y = bgrect.y + y * 32;
+				newobject.DMG = 0;
+				newobject.HP = -1;
+				newobject.LVL = -1;
+				newobject.moving = -1;
+				newobject.movingchek = 0;
+				newobject.playerchek = 0;
+				newobject.texture = stTexture;
+				addlast(&extcontainer, newobject);
+			}
+			x++;
+			fscanf(mapinput, "%c", &objectsymbol);
+		}
+		y++;
+		x = -1;
+		fscanf(mapinput, "%c", &objectsymbol);
+	}
+	printf("s = %c ", objectsymbol);
+	printf("x:%i y:%i\n", x, y);
+	x++;
+	fclose(mapinput);
+	return extcontainer;
 }
 
 int main(int argc, char* argv[]){
@@ -287,7 +330,7 @@ int main(int argc, char* argv[]){
 	struct object player;
 	player.HP = 3;
 	player.LVL = 0;
-	player.DMG = 1;
+	player.DMG = 3;
 	player.moving = 0;
 	player.movingchek = 0;
 	player.playerchek = 1;
@@ -318,8 +361,9 @@ int main(int argc, char* argv[]){
 
 	addlast(&objects, enemy);
 
+	objects = loadmap(&objects, bgrect, "maps/map1.txt");
 	multiSpawn(mainRender, &objects, enemy, bgrect, 40);
-	multiSpawn(mainRender, &objects, stan, bgrect, 40);
+	multiSpawn(mainRender, &objects, stan, bgrect, 0);
 	printf("%i\n", element_count(&objects));
 
 	const Uint8 *keystate = SDL_GetKeyboardState(NULL);
