@@ -1,22 +1,16 @@
-/*
- * containers.h
- *
- *  Created on: May 6, 2022
- *      Author: Никита
- */
-
 #ifndef CONTAINERS_H_
 #define CONTAINERS_H_
 
+
 struct animation{
-	short int angle;
-	unsigned int timer[6];
+	unsigned short int angle;
+	unsigned int timer[5];
 	SDL_Point center;
 	SDL_Rect animationRect;
 };
 
 struct item{
-	short int ID;
+	int ID;
 	int DMG;
 	struct animation animation;
 	unsigned int recharge;
@@ -27,12 +21,15 @@ struct item{
 struct object{
 	int HP;
 	int DMG;
-	int LVL;
+	short int LVL;
 	int ID;
-	short int direction;
-	unsigned int restofway;
-	unsigned int takendamage;
-	unsigned int attackrecharge;
+	int XP;
+	unsigned int movespeed;
+	char direction;
+	char restofway;
+	int takendamage;
+	unsigned short int attackrecharge;
+	char relation;
 	struct item weapon;
 	struct animation animation;
 	SDL_Rect damageEffectRect;
@@ -46,19 +43,23 @@ typedef struct element{
     struct element *next, *previous, *head, *tail;
 }container;
 
+container *extraContainer2, *extraContainer3, *addElement;
+struct object extraObject2;
+int counter, counter2, counter3;
+
 container *newcontainer(){
-    container *newcontainer = malloc(sizeof(container));
-    newcontainer->next = NULL;
-    newcontainer->head = NULL;
-    newcontainer->tail = NULL;
-    newcontainer->previous = NULL;
-    return newcontainer;
+	extraContainer2 = malloc(sizeof(container));
+	extraContainer2->next = NULL;
+	extraContainer2->head = NULL;
+	extraContainer2->tail = NULL;
+	extraContainer2->previous = NULL;
+    return extraContainer2;
 }
 
 //checking if the container is empty
 int is_empty(container **headcontainer){
-    container *extelement = *headcontainer;
-    if(extelement->head == NULL){
+	extraContainer2 = *headcontainer;
+    if(extraContainer2->head == NULL){
         return 0;
     }
     else{
@@ -68,18 +69,17 @@ int is_empty(container **headcontainer){
 
 //counting container elements
 int element_count(container **headcontainer){
-    container *extelement = newcontainer();
-    extelement = *headcontainer;
-    int counter = 0;
-    if(is_empty(&extelement) == 0){
+	extraContainer2 = *headcontainer;
+	counter3 = 0;
+    if(is_empty(&extraContainer2) == 0){
         return 0;
     }
     else{
-        while (extelement != NULL){
-            counter++;
-            extelement = extelement->next;
+        while (extraContainer2 != NULL){
+        	counter3++;
+        	extraContainer2 = extraContainer2->next;
         }
-        return counter;
+        return counter3;
     }
 }
 
@@ -88,51 +88,50 @@ int element_count(container **headcontainer){
 
 //function to add a new element to the stack
 void addtostack(container **headstack, struct object data){
-    container *extelement = newcontainer();
-    container *addelement = newcontainer();
-    extelement = *headstack;
-    if(element_count(&extelement) == 0){
-        addelement->data = data;
-        addelement->head = addelement;
-        addelement->tail = addelement;
-        extelement = addelement;
+	addElement = newcontainer();
+    extraContainer2 = *headstack;
+    if(element_count(&extraContainer2) == 0){
+    	addElement->data = data;
+    	addElement->head = addElement;
+    	addElement->tail = addElement;
+        extraContainer2 = addElement;
     }
     else{
-        addelement->data = data;
-        addelement->head = addelement;
-        addelement->next = extelement;
-        addelement->tail = extelement->tail;
-        extelement->previous = addelement;
-        while (extelement != NULL){
-            extelement->head = addelement;
-            extelement = extelement->next;
+    	addElement->data = data;
+    	addElement->head = addElement;
+    	addElement->next = extraContainer2;
+    	addElement->tail = extraContainer2->tail;
+        extraContainer2->previous = addElement;
+        while (extraContainer2 != NULL){
+        	extraContainer2->head = addElement;
+        	extraContainer2 = extraContainer2->next;
         }
-        extelement = addelement;
+        extraContainer2 = addElement;
     }
-    *headstack = extelement;
+    *headstack = extraContainer2;
 }
 
 //function to pop an element from the stack
 struct object getstack(container **headstack){
-    container *extstack = *headstack;
-    struct object getvalue = extstack->data;
-    if (element_count(&extstack) == 1){
-        extstack->next = NULL;
-        extstack->head = NULL;
-        extstack->tail = NULL;
-        extstack->previous = NULL;
-    } else if (element_count(&extstack) > 1){
-        extstack = extstack->next;
-        extstack->head = extstack;
-        extstack->previous = NULL;
-        while (extstack->next != NULL){
-            extstack = extstack->next;
-            extstack->head = extstack->previous->head;
+	extraContainer2 = *headstack;
+	extraObject2 = extraContainer2->data;
+    if (element_count(&extraContainer2) == 1){
+    	extraContainer2->next = NULL;
+    	extraContainer2->head = NULL;
+    	extraContainer2->tail = NULL;
+    	extraContainer2->previous = NULL;
+    } else if (element_count(&extraContainer2) > 1){
+    	extraContainer2 = extraContainer2->next;
+    	extraContainer2->head = extraContainer2;
+    	extraContainer2->previous = NULL;
+        while (extraContainer2->next != NULL){
+        	extraContainer2 = extraContainer2->next;
+        	extraContainer2->head = extraContainer2->previous->head;
         }
-        extstack = extstack->head;
-        *headstack = extstack;
+        extraContainer2 = extraContainer2->head;
+        *headstack = extraContainer2;
     }
-    return getvalue;
+    return extraObject2;
 }
 
 
@@ -140,53 +139,51 @@ struct object getstack(container **headstack){
 
 //function to add a new element to the queue
 void addtoqueue(container **headqueue, struct object data){
-    container *extelement = newcontainer();
-    container *addelement = newcontainer();
-    extelement = *headqueue;
-    if(element_count(&extelement) == 0){
-        addelement->data = data;
-        addelement->head = addelement;
-        addelement->tail = addelement;
-        extelement = addelement;
+	addElement = newcontainer();
+    extraContainer2 = *headqueue;
+    if(element_count(&extraContainer2) == 0){
+    	addElement->data = data;
+    	addElement->head = addElement;
+    	addElement->tail = addElement;
+        extraContainer2 = addElement;
     }
     else{
-        addelement->data = data;
-        addelement->head = addelement;
-        addelement->next = extelement;
-        addelement->tail = extelement->tail;
-        extelement->previous = addelement;
-        while (extelement != NULL){
-            extelement->head = addelement;
-            extelement = extelement->next;
+    	addElement->data = data;
+    	addElement->head = addElement;
+    	addElement->next = extraContainer2;
+    	addElement->tail = extraContainer2->tail;
+        extraContainer2->previous = addElement;
+        while (extraContainer2 != NULL){
+        	extraContainer2->head = addElement;
+        	extraContainer2 = extraContainer2->next;
         }
-        extelement = addelement;
+        extraContainer2 = addElement;
     }
-    *headqueue = extelement;
+    *headqueue = extraContainer2;
 }
 
 //function to pop an element from the queue
 struct object getqueue(container **headqueue){
-    container *extqueue = *headqueue;
-    struct object getdata;
-    if (element_count(&extqueue) == 1){
-        getdata = extqueue->data;
-        extqueue->next = NULL;
-        extqueue->head = NULL;
-        extqueue->tail = NULL;
-        extqueue->previous = NULL;
-    } else if (element_count(&extqueue) > 1){
-        getdata = extqueue->tail->data;
-        extqueue = extqueue->tail->previous;
-        extqueue->tail = extqueue;
-        extqueue->next = NULL;
-        while (extqueue->previous != NULL){
-            extqueue = extqueue->previous;
-            extqueue->tail = extqueue->next->tail;
+    extraContainer2 = *headqueue;
+    if (element_count(&extraContainer2) == 1){
+        extraObject2 = extraContainer2->data;
+        extraContainer2->next = NULL;
+        extraContainer2->head = NULL;
+        extraContainer2->tail = NULL;
+        extraContainer2->previous = NULL;
+    } else if (element_count(&extraContainer2) > 1){
+    	extraObject2 = extraContainer2->tail->data;
+        extraContainer2 = extraContainer2->tail->previous;
+        extraContainer2->tail = extraContainer2;
+        extraContainer2->next = NULL;
+        while (extraContainer2->previous != NULL){
+        	extraContainer2 = extraContainer2->previous;
+        	extraContainer2->tail = extraContainer2->next->tail;
         }
-        extqueue = extqueue->head;
-        *headqueue = extqueue;
+        extraContainer2 = extraContainer2->head;
+        *headqueue = extraContainer2;
     }
-    return getdata;
+    return extraObject2;
 }
 
 
@@ -194,155 +191,140 @@ struct object getqueue(container **headqueue){
 
 //function to add a new element to the beginning of the list
 void addfirst(container **headlist, struct object data){
-    container *extelement = *headlist;
-    container *addelement = newcontainer();
-    addelement->data = data;
-    addelement->next = extelement;
-    addelement->head = addelement;
-    extelement->previous = addelement;
-    while (extelement != NULL){
-        extelement->head = addelement;
-        extelement = extelement->next;
+    extraContainer2 = *headlist;
+    addElement = newcontainer();
+    addElement->data = data;
+    addElement->next = extraContainer2;
+    addElement->head = addElement;
+    extraContainer2->previous = addElement;
+    while (extraContainer2 != NULL){
+    	extraContainer2->head = addElement;
+    	extraContainer2 = extraContainer2->next;
     }
-    *headlist = addelement;
+    *headlist = addElement;
 }
 
 //function to add a new element to the end of the list
 void addlast(container **headlist, struct object data){
-    container *extelement = *headlist;
-    container *addelement = newcontainer();
-    addelement->data = data;
-    addelement->head = extelement->head;
-    while(extelement->next != NULL){
-        extelement = extelement->next;
+    extraContainer3 = *headlist;
+    addElement = newcontainer();
+    addElement->data = data;
+    addElement->head = extraContainer3->head;
+    while(extraContainer3->next != NULL){
+    	extraContainer3 = extraContainer3->next;
     }
-    extelement->next = addelement;
-    addelement->previous = extelement;
-    extelement = extelement->head;
-    *headlist = extelement;
+    extraContainer3->next = addElement;
+    addElement->previous = extraContainer3;
+    extraContainer3 = extraContainer3->head;
+    *headlist = extraContainer3;
 }
 
 //function to add a new element after the specified number
 void addtolist(container **headlist, struct object data, int number){
-    container *extelement = newcontainer();
-    container *addelement = newcontainer();
-    extelement = *headlist;
-    if(element_count(&extelement) == 0){
-        addelement->data = data;
-        addelement->head = addelement;
-        extelement = addelement;
+    addElement = newcontainer();
+    extraContainer2 = *headlist;
+    if(element_count(&extraContainer2) == 0){
+    	addElement->data = data;
+    	addElement->head = addElement;
+        extraContainer2 = addElement;
     }
     else if(number == -1){
-        addfirst(&extelement, data);
+        addfirst(&extraContainer2, data);
     }
-    else if(number == element_count(&extelement) - 1){
-        addlast(&extelement, data);
+    else if(number == element_count(&extraContainer2) - 1){
+        addlast(&extraContainer2, data);
     }
     else{
-        int counter = 0;
-        while(extelement->next != NULL){
-            if (counter == number){
-                addelement->data = data;
-                addelement->head = extelement->head;
-                addelement->previous = extelement;
-                addelement->next = extelement->next;
-                extelement->next->previous = addelement;
-                extelement->next = addelement;
+    	counter2 = 0;
+        while(extraContainer2->next != NULL){
+            if (counter2 == number){
+            	addElement->data = data;
+            	addElement->head = extraContainer2->head;
+            	addElement->previous = extraContainer2;
+            	addElement->next = extraContainer2->next;
+                extraContainer2->next->previous = addElement;
+                extraContainer2->next = addElement;
             }
-            counter++;
-            extelement = extelement->next;
+            counter2++;
+            extraContainer2 = extraContainer2->next;
         }
-        extelement = extelement->head;
+        extraContainer2 = extraContainer2->head;
     }
-    *headlist = extelement;
+    *headlist = extraContainer2;
 }
 
 //function to remove a new element to the beginning of the list
 void delfirst(container **headlist){
-    container *extelement = *headlist;
-    extelement = extelement->next;
-    extelement->head = extelement;
-    extelement->previous = NULL;
-    while (extelement->next != NULL){
-        extelement = extelement->next;
-        extelement->head = extelement->previous->head;
+    extraContainer2 = *headlist;
+    extraContainer2 = extraContainer2->next;
+    free(extraContainer2->previous);
+    extraContainer2->head = extraContainer2;
+    extraContainer2->previous = NULL;
+    while (extraContainer2->next != NULL){
+    	extraContainer2 = extraContainer2->next;
+    	extraContainer2->head = extraContainer2->previous->head;
     }
-    extelement = extelement->head;
-    *headlist = extelement;
+    extraContainer2 = extraContainer2->head;
+    *headlist = extraContainer2;
 }
 
 //function to remove a new element to the end of the list
 void dellast(container **headlist){
-    container *extelement = *headlist;
-    while (extelement->next != NULL) {
-        extelement = extelement->next;
+	extraContainer2 = *headlist;
+    while (extraContainer2->next->next != NULL) {
+    	extraContainer2 = extraContainer2->next;
     }
-    extelement->previous->next = NULL;
-    extelement = extelement->head;
-    *headlist = extelement;
+    free(extraContainer2->next);
+    extraContainer2->next = NULL;
+    extraContainer2 = extraContainer2->head;
+    *headlist = extraContainer2;
 }
 
 //function to remove the specified element
 void delelement(container **headlist, int number){
-    container *extelement = newcontainer();
-    extelement = *headlist;
-    int counter = 0;
+	extraContainer3 = *headlist;
+    struct element *extpointer;
+    counter2 = 0;
     if(number == 0){
-        delfirst(&extelement);
+        delfirst(&extraContainer3);
     }
-    else if(number == element_count(&extelement) - 1){
-        dellast(&extelement);
+    else if(number == element_count(&extraContainer3) - 1){
+        dellast(&extraContainer3);
     }
     else {
-        while (extelement->next != NULL) {
-            if (counter == number) {
-                extelement->previous->next = extelement->next;
-                extelement->next->previous = extelement->previous;
+        while (extraContainer3->next != NULL) {
+            if (counter2 == number) {
+            	extpointer = extraContainer3;
+            	extraContainer3->previous->next = extraContainer3->next;
+            	extraContainer3->next->previous = extraContainer3->previous;
+            	counter2++;
+                extraContainer3 = extraContainer3->next;
+                free(extpointer);
+
             }
-            counter++;
-            extelement = extelement->next;
+            else{
+            	counter2++;
+            	extraContainer3 = extraContainer3->next;
+            }
         }
     }
-    extelement = extelement->head;
-    *headlist = extelement;
+    extraContainer3 = extraContainer3->head;
+    *headlist = extraContainer3;
 }
 
-//function to get the value of the specified element
-struct object getlistdata(container **headlist, int number){
-    container *pointer = *headlist;
-    container *getlist = newcontainer();
-    int counter = 0;
-    if(element_count(&pointer) - 1 != number) {
-        while (pointer != NULL) {
-            if (counter == number) {
-                getlist->data = pointer->data;
-            }
-            counter++;
-            pointer = pointer->next;
-        }
-    }
-    else if(element_count(&pointer) - 1 == number){
-        while (pointer->next != NULL) {
-            pointer = pointer->next;
-        }
-        getlist->data = pointer->data;
-    }
-    pointer = NULL;
-    return getlist->data;
-}
 
 //function to get the address of the specified element
 container *getlist(container **headlist, int number){
-    container *extlist = *headlist;
-    int counter = 0;
-    while (extlist != NULL){
+	extraContainer2 = *headlist;
+    counter = 0;
+    while (extraContainer2 != NULL){
         if(number == counter){
-            return extlist;
+            return extraContainer2;
         }
         counter++;
-        extlist = extlist->next;
+        extraContainer2 = extraContainer2->next;
     }
-    return extlist;
+    return extraContainer2;
 }
 
 
