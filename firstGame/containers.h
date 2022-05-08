@@ -9,16 +9,17 @@
 #define CONTAINERS_H_
 
 struct animation{
-	int angle;
-	int timer[10];
+	short int angle;
+	unsigned int timer[6];
 	SDL_Point center;
 	SDL_Rect animationRect;
 };
 
 struct item{
-	int ID;
+	short int ID;
+	int DMG;
 	struct animation animation;
-	int recharge;
+	unsigned int recharge;
 	SDL_Rect rectangle;
 	SDL_Texture *texture;
 };
@@ -28,10 +29,10 @@ struct object{
 	int DMG;
 	int LVL;
 	int ID;
-	int direction;
-	int restofway;
-	int takendamage;
-	int attackrecharge;
+	short int direction;
+	unsigned int restofway;
+	unsigned int takendamage;
+	unsigned int attackrecharge;
 	struct item weapon;
 	struct animation animation;
 	SDL_Rect damageEffectRect;

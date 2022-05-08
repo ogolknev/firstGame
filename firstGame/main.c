@@ -1,24 +1,4 @@
-#include <SDL.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <SDL_image.h>
-#include <SDL_mixer.h>
-#include <SDL_ttf.h>
-#include "containers.h"
-#include <time.h>
-#include <SDL_timer.h>
-
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 640;
-const int cellsize = 32;
-int run = 1;
-
-SDL_Window *mainWindow = NULL;
-SDL_Renderer *mainRender = NULL;
-SDL_Event *mainEvent;
-SDL_Rect extraRect;
-SDL_Point extraPoint;
-container* objects;
+#include "includes.h"
 
 
 int initSDL(){
@@ -76,15 +56,7 @@ SDL_Texture *newtext(char *text, SDL_Renderer *render, char *pathfontfile, int r
 int *calculateTrafficBans(struct object entity, container **headcontainer){
 	container *extcontainer = *headcontainer;
 	int *unmoving = calloc(4,sizeof(int));
-	if(entity.ID == -1){
-		entity.rectangle.x += 8;
-		entity.rectangle.y += 8;
-	}
 	for(int i = 0; i < element_count(&extcontainer); i++){
-		if(getlist(&extcontainer, i)->data.ID == -1){
-			getlist(&extcontainer, i)->data.rectangle.x += 8;
-			getlist(&extcontainer, i)->data.rectangle.y += 8;
-		}
 		if(abs(entity.rectangle.x - getlist(&extcontainer, i)->data.rectangle.x) <= 32
 		&& abs(entity.rectangle.y - getlist(&extcontainer, i)->data.rectangle.y) <= 32
 		&& getlist(&extcontainer, i)->data.LVL != -1){
@@ -130,10 +102,6 @@ int *calculateTrafficBans(struct object entity, container **headcontainer){
 					unmoving[2] = 2;
 				}
 			}
-		}
-		if(getlist(&extcontainer, i)->data.ID == -1){
-			getlist(&extcontainer, i)->data.rectangle.x -= 8;
-			getlist(&extcontainer, i)->data.rectangle.y -= 8;
 		}
 	}
 	return unmoving;
@@ -225,15 +193,13 @@ struct object playerMoving(struct object prect, int *trafficbans, const Uint8 *k
 container *attack(int attackernumber, container **headcontainer){
 	container *extcontainer = *headcontainer;
 	struct object attacker = getlist(&extcontainer, attackernumber)->data;
-	int ext = 0;
-	if(getlist(&extcontainer, attackernumber)->data.ID == -1) ext = 8;
 	if(getlist(&extcontainer, attackernumber)->data.attackrecharge == 0 && getlist(&extcontainer, attackernumber)->data.LVL != -1){
 		for(int i = 0; i < element_count(&extcontainer); i++){
-			if(abs(attacker.rectangle.x + ext - getlist(&extcontainer, i)->data.rectangle.x) <= 32
-			&& abs(attacker.rectangle.y + ext - getlist(&extcontainer, i)->data.rectangle.y) <= 32
+			if(abs(attacker.rectangle.x - getlist(&extcontainer, i)->data.rectangle.x) <= 32
+			&& abs(attacker.rectangle.y - getlist(&extcontainer, i)->data.rectangle.y) <= 32
 			&& (attacker.ID != getlist(&extcontainer, i)->data.ID) && getlist(&extcontainer, i)->data.HP > 0){
-				getlist(&extcontainer, i)->data.HP -= attacker.DMG;
-				getlist(&extcontainer, i)->data.takendamage = attacker.DMG;
+				getlist(&extcontainer, i)->data.HP -= attacker.DMG + attacker.weapon.DMG;
+				getlist(&extcontainer, i)->data.takendamage = attacker.DMG + attacker.weapon.DMG;
 				getlist(&extcontainer, attackernumber)->data.weapon.animation.angle = 0;
 				getlist(&extcontainer, i)->data.animation.timer[0] = 60;
 				getlist(&extcontainer, i)->data.animation.timer[1] = 0;
@@ -276,7 +242,7 @@ container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
 			if(objectsymbol == 'x'){
 				newobject.rectangle.x = bgrect.x + x * 32;
 				newobject.rectangle.y = bgrect.y + y * 32;
-				newobject.DMG = 0;
+				newobject.DMG = -1;
 				newobject.HP = -1;
 				newobject.LVL = 0;
 				newobject.direction = -1;
@@ -336,12 +302,12 @@ int main(int argc, char* argv[]){
 	bgrect.x = (SCREEN_WIDTH - bgrect.w) / 2;
 	bgrect.y = (SCREEN_HEIGHT - bgrect.h) / 2;
 
-	SDL_Texture *pTexture = IMG_LoadTexture(mainRender,"Textures/helmet20.png");
+	SDL_Texture *pTexture = IMG_LoadTexture(mainRender,"Textures/helmet1.png");
 	SDL_Rect prect;
-	prect.h = 48;
-	prect.w = 48;
-	prect.x = cellsize * 10 - 8;
-	prect.y = cellsize * 10 - 8;
+	prect.h = cellsize;
+	prect.w = cellsize;
+	prect.x = cellsize * 10;
+	prect.y = cellsize * 10;
 
 	SDL_Texture *bloodTexture = IMG_LoadTexture(mainRender,"Textures/blood.png");
 	SDL_Rect bloodrect;
@@ -353,15 +319,30 @@ int main(int argc, char* argv[]){
 	swordrect.h = 55;
 	swordrect.w = cellsize;
 
-
 	struct item initial_sword;
 	initial_sword.ID = 0;
+	initial_sword.DMG = 1;
 	initial_sword.recharge = 55;
 	initial_sword.texture = swordTexture;
 	initial_sword.rectangle = swordrect;
 	initial_sword.animation.center.x = cellsize / 2;
 	initial_sword.animation.center.y = 0;
 	initial_sword.animation.angle = 0;
+
+	SDL_Texture *goblinStickTexture = IMG_LoadTexture(mainRender, "Textures/goblin_stick.png");;
+	SDL_Rect goblinSickRect;
+	goblinSickRect.h = cellsize;
+	goblinSickRect.w = cellsize;
+
+	struct item goblin_stick;
+	goblin_stick.ID = 1;
+	goblin_stick.DMG = 1;
+	goblin_stick.recharge = 120;
+	goblin_stick.texture = goblinStickTexture;
+	goblin_stick.rectangle = goblinSickRect;
+	goblin_stick.animation.center.x = cellsize / 2;
+	goblin_stick.animation.center.y = 0;
+	goblin_stick.animation.angle = 0;
 
 	SDL_Texture *stanTexture = IMG_LoadTexture(mainRender,"Textures/stan.png");
 	SDL_Rect stanrect;
@@ -378,12 +359,12 @@ int main(int argc, char* argv[]){
 	SDL_RendererFlip swordflip = SDL_FLIP_VERTICAL;
 
 	struct object player;
-	player.HP = 10;
 	player.LVL = 0;
+	player.HP = 15;
 	player.DMG = 2;
 	player.ID = -1;
 	player.direction = 0;
-	player.attackrecharge = 0;
+	player.attackrecharge = 100;
 	player.restofway = 0;
 	player.takendamage = 0;
 	player.damageEffectTexture = bloodTexture;
@@ -391,35 +372,39 @@ int main(int argc, char* argv[]){
 	player.rectangle = prect;
 	player.texture = pTexture;
 	player.weapon = initial_sword;
+	player.weapon.animation.angle = 360;
 
 
 	addtolist(&objects, player, 0);
 
 
 	struct object goblin;
-	goblin.HP = 3;
+	goblin.HP = 5;
 	goblin.LVL = 0;
-	goblin.DMG = 1;
+	goblin.DMG = 0;
+	goblin.attackrecharge = 100;
 	goblin.direction = 0;
 	goblin.restofway = 0;
 	goblin.takendamage = 0;
 	goblin.rectangle = enemyrect;
 	goblin.texture = goblinTexture;
-	goblin.weapon = initial_sword;
+	goblin.weapon = goblin_stick;
 	goblin.damageEffectTexture = bloodTexture;
 	goblin.damageEffectRect = bloodrect;
 	goblin.death = deathgoblin;
+	goblin.weapon.animation.angle = 360;
 
 
 	struct object stan;
 	stan.HP = -1;
 	stan.LVL = 0;
-	stan.DMG = 0;
+	stan.DMG = -1;
 	stan.direction = -1;
 	stan.restofway = 0;
 	stan.takendamage = 0;
 	stan.rectangle = stanrect;
 	stan.texture = stanTexture;
+	stan.animation.timer[0] = 0;
 
 	struct object extraobject;
 
@@ -475,7 +460,7 @@ int main(int argc, char* argv[]){
 
 
 			//rendering effects
-			if(getlist(&objects, i)->data.animation.timer[0] > 0){
+			if(getlist(&objects, i)->data.animation.timer[0] > 0 && getlist(&objects, i)->data.takendamage > 0){
 
 
 				//damage effect
@@ -497,13 +482,14 @@ int main(int argc, char* argv[]){
 
 
 			//attacks of entities
-			if(abs(getlist(&objects, 0)->data.rectangle.x - getlist(&objects, i)->data.rectangle.x) <= 32
-			&& abs(getlist(&objects, 0)->data.rectangle.y - getlist(&objects, i)->data.rectangle.y) <= 32
-			&& getlist(&objects, 0)->data.ID == -1 && i != 0 && limitedrandom(0,2,i))
-			{
-				objects = attack(i, &objects);
+			if(getlist(&objects, i)->data.DMG != -1){
+				if(abs(getlist(&objects, 0)->data.rectangle.x - getlist(&objects, i)->data.rectangle.x) <= 32
+				&& abs(getlist(&objects, 0)->data.rectangle.y - getlist(&objects, i)->data.rectangle.y) <= 32
+				&& getlist(&objects, 0)->data.ID == -1 && i != 0 && limitedrandom(0,2,i))
+				{
+					objects = attack(i, &objects);
+				}
 			}
-
 
 			//attack animation
 			if(getlist(&objects, i)->data.weapon.animation.angle < 360 && getlist(&objects, i)->data.attackrecharge > 0){
