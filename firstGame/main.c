@@ -33,7 +33,7 @@ int limitedrandom(int botEdge, int topEdge, int extra){
 }
 
 
-void randSpawn(struct object object, container **headcontainer, SDL_Rect bgrect, int extra){
+void randSpawn(object object, container **headcontainer, SDL_Rect bgrect, int extra){
 	extraContainer = *headcontainer;
 	object.rectangle.x = bgrect.x + limitedrandom(1, 19, extra*752) * 32;
 	object.rectangle.y = bgrect.y + (limitedrandom(1, 19, extra * extra * 257257)) * 32;
@@ -43,7 +43,7 @@ void randSpawn(struct object object, container **headcontainer, SDL_Rect bgrect,
 }
 
 
-void multiSpawn(SDL_Renderer *render, container **headcontainer, struct object object, SDL_Rect bgrect, int number){
+void multiSpawn(SDL_Renderer *render, container **headcontainer, object object, SDL_Rect bgrect, int number){
 	extraContainer = *headcontainer;
 	for(j = 0; j < number; j++){
 		randSpawn(object, &extraContainer, bgrect, j + 1);
@@ -63,7 +63,7 @@ SDL_Texture *newtext(char *text, SDL_Renderer *render, int red, int green, int b
 }
 
 
-int *calculateTrafficBans(struct object entity, container **headcontainer){
+int *calculateTrafficBans(object entity, container **headcontainer){
 	extraContainer = *headcontainer;
 	unmoving = calloc(4,sizeof(int));
 	for(j = 0; j < element_count(&extraContainer); j++){
@@ -118,7 +118,7 @@ int *calculateTrafficBans(struct object entity, container **headcontainer){
 }
 
 
-int calculatechasing(int *unmoving, struct object entity, container **headcontainer){
+int calculatechasing(int *unmoving, object entity, container **headcontainer){
 	extraContainer = *headcontainer;
 	extravar = -1;
 	for(j = 0; j < element_count(&extraContainer); j++){
@@ -192,7 +192,7 @@ int calculatechasing(int *unmoving, struct object entity, container **headcontai
 }
 
 
-int calculateEntityMoving(struct object entity, container **headcontainer, int randvar){
+int calculateEntityMoving(object entity, container **headcontainer, int randvar){
 	extraContainer = *headcontainer;
 	extravar = 0;
 	unmoving = calculateTrafficBans(entity, &extraContainer);
@@ -218,7 +218,7 @@ int calculateEntityMoving(struct object entity, container **headcontainer, int r
 }
 
 
-struct object entityMoving(struct object entity, container **headcontainer, int randvar){
+object entityMoving(object entity, container **headcontainer, int randvar){
 	extraContainer = *headcontainer;
 	if(entity.direction == 0 && entity.ID != -1){
 		entity.direction = calculateEntityMoving(entity, &extraContainer, randvar);
@@ -262,7 +262,7 @@ struct object entityMoving(struct object entity, container **headcontainer, int 
 }
 
 
-struct object playerMoving(struct object prect, int *trafficbans, const Uint8 *keyboardState){
+object playerMoving(object prect, int *trafficbans, const Uint8 *keyboardState){
 	if((keyboardState[SDL_SCANCODE_UP])||(keyboardState[SDL_SCANCODE_W]))
 		if(prect.direction == 0 && trafficbans[0] == 0){
 			prect.direction = 1;
@@ -332,44 +332,39 @@ container *attack(int attackernumber, container **headcontainer){
 
 
 container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
-	container *extcontainer = *headcontainer;
-	struct object newobject;
-	SDL_Texture *stTexture = IMG_LoadTexture(mainRender,"Textures/stan.png");
-	newobject.rectangle.h = cellsize;
-	newobject.rectangle.w = cellsize;
-	FILE *mapinput;
-	mapinput = fopen(path, "r");
-	char objectsymbol;
-	int x = 0;
-	int y = 0;
-	fscanf(mapinput, "%c", &objectsymbol);
-	while(feof(mapinput) == 0){
-		while(objectsymbol != '\\'){
-			if(objectsymbol == 'x'){
-				newobject.rectangle.x = bgrect.x + x * cellsize;
-				newobject.rectangle.y = bgrect.y + y * cellsize;
-				newobject.DMG = -1;
-				newobject.HP = -1;
-				newobject.LVL = 0;
-				newobject.direction = -1;
-				newobject.ID = element_count(&extcontainer);
-				newobject.texture = stTexture;
-				addlast(&extcontainer, newobject);
+	extraContainer = *headcontainer;
+	extraTexture = IMG_LoadTexture(mainRender,"Textures/stan.png");
+	extraObject.rectangle.h = cellsize;
+	extraObject.rectangle.w = cellsize;
+	extraStream = fopen(path, "r");
+	fscanf(extraStream, "%c", &extraSymbol);
+	while(feof(extraStream) == 0){
+		while(extraSymbol != '\\'){
+			if(extraSymbol == 'x'){
+				extraObject.rectangle.x = bgrect.x + extravar * cellsize;
+				extraObject.rectangle.y = bgrect.y + extravar2 * cellsize;
+				extraObject.DMG = -1;
+				extraObject.HP = -1;
+				extraObject.LVL = 0;
+				extraObject.direction = -1;
+				extraObject.ID = element_count(&extraContainer);
+				extraObject.texture = extraTexture;
+				addlast(&extraContainer, extraObject);
 			}
-			x++;
-			fscanf(mapinput, "%c", &objectsymbol);
+			extravar++;
+			fscanf(extraStream, "%c", &extraSymbol);
 		}
-		y++;
-		x = -1;
-		fscanf(mapinput, "%c", &objectsymbol);
+		extravar2++;
+		extravar = -1;
+		fscanf(extraStream, "%c", &extraSymbol);
 	}
-	x++;
-	fclose(mapinput);
-	return extcontainer;
+	extravar++;
+	fclose(extraStream);
+	return extraContainer;
 }
 
 
-int attackanimation(struct object *attacker, SDL_RendererFlip flip, int angle){
+int attackanimation(object *attacker, SDL_RendererFlip flip, int angle){
 	attacker->weapon.animation.angle = angle;
 	attacker->weapon.animation.angle += 720/attacker->weapon.recharge;
 	extraPoint = attacker->weapon.animation.center;
@@ -402,31 +397,31 @@ int main(int argc, char* argv[]){
 	char* damageIndicator = malloc(20*sizeof(char));
 	mainFont = TTF_OpenFont("fonts/bauhaus.ttf", 200);
 
-	SDL_Texture *bgTexture = IMG_LoadTexture(mainRender,"Textures/backgrounds/background_0.png");
+	SDL_Texture *bgTexture = IMG_LoadTexture(mainRender,"textures/backgrounds/background_0.png");
 	SDL_Rect bgrect;
 	bgrect.h = 640;
 	bgrect.w = 640;
 	bgrect.x = (SCREEN_WIDTH - bgrect.w) / 2;
 	bgrect.y = (SCREEN_HEIGHT - bgrect.h) / 2;
 
-	SDL_Texture *pTexture = IMG_LoadTexture(mainRender,"Textures/helmet1.png");
+	SDL_Texture *pTexture = IMG_LoadTexture(mainRender,"textures/helmet1.png");
 	SDL_Rect prect;
 	prect.h = cellsize;
 	prect.w = cellsize;
 	prect.x = cellsize * 10;
 	prect.y = cellsize * 10;
 
-	SDL_Texture *bloodTexture = IMG_LoadTexture(mainRender,"Textures/blood.png");
+	SDL_Texture *bloodTexture = IMG_LoadTexture(mainRender,"textures/blood.png");
 	SDL_Rect bloodrect;
 	bloodrect.h = cellsize;
 	bloodrect.w = cellsize;
 
-	SDL_Texture *swordTexture = IMG_LoadTexture(mainRender, "Textures/sword.png");
+	SDL_Texture *swordTexture = IMG_LoadTexture(mainRender, "textures/sword.png");
 	SDL_Rect swordrect;
 	swordrect.h = 55;
 	swordrect.w = cellsize;
 
-	struct item initial_sword;
+	item initial_sword;
 	initial_sword.ID = 0;
 	initial_sword.DMG = 1;
 	initial_sword.recharge = 150;
@@ -436,12 +431,12 @@ int main(int argc, char* argv[]){
 	initial_sword.animation.center.y = 0;
 	initial_sword.animation.angle = 0;
 
-	SDL_Texture *goblinStickTexture = IMG_LoadTexture(mainRender, "Textures/goblin_stick.png");
+	SDL_Texture *goblinStickTexture = IMG_LoadTexture(mainRender, "textures/goblin_stick.png");
 	SDL_Rect goblinSickRect;
 	goblinSickRect.h = cellsize;
 	goblinSickRect.w = cellsize;
 
-	struct item goblin_stick;
+	item goblin_stick;
 	goblin_stick.ID = 1;
 	goblin_stick.DMG = 1;
 	goblin_stick.recharge = 200;
@@ -451,12 +446,12 @@ int main(int argc, char* argv[]){
 	goblin_stick.animation.center.y = 0;
 	goblin_stick.animation.angle = 0;
 
-	SDL_Texture *GMSTexture = IMG_LoadTexture(mainRender, "Textures/MEGGGA_GGGOOOOBLIN_STTTTIIICKKKK.png");
+	SDL_Texture *GMSTexture = IMG_LoadTexture(mainRender, "textures/MEGGGA_GGGOOOOBLIN_STTTTIIICKKKK.png");
 	SDL_Rect GMSRect;
 	GMSRect.h = cellsize;
 	GMSRect.w = cellsize;
 
-	struct item GMS;
+	item GMS;
 	GMS.ID = 2;
 	GMS.DMG = 15;
 	GMS.recharge = 250;
@@ -467,13 +462,13 @@ int main(int argc, char* argv[]){
 	GMS.animation.angle = 0;
 
 
-	SDL_Texture *stanTexture = IMG_LoadTexture(mainRender,"Textures/stan.png");
+	SDL_Texture *stanTexture = IMG_LoadTexture(mainRender,"textures/stan.png");
 	SDL_Rect stanrect;
 	stanrect.h = cellsize;
 	stanrect.w = cellsize;
 
-	SDL_Texture *goblinTexture = IMG_LoadTexture(mainRender, "Textures/minigoblin.png");
-	SDL_Texture *deathgoblin = IMG_LoadTexture(mainRender, "Textures/deadgoblin.png");
+	SDL_Texture *goblinTexture = IMG_LoadTexture(mainRender, "textures/minigoblin.png");
+	SDL_Texture *deathgoblin = IMG_LoadTexture(mainRender, "textures/deadgoblin.png");
 	SDL_Rect enemyrect;
 	enemyrect.h = cellsize;
 	enemyrect.w = cellsize;
@@ -481,7 +476,7 @@ int main(int argc, char* argv[]){
 	objects = newcontainer();
 	SDL_RendererFlip swordflip = SDL_FLIP_VERTICAL;
 
-	struct object player;
+	object player;
 	player.LVL = 0;
 	player.HP = 15;
 	player.DMG = 2;
@@ -504,7 +499,7 @@ int main(int argc, char* argv[]){
 	addtolist(&objects, player, 0);
 
 
-	struct object goblin;
+	object goblin;
 	goblin.HP = 5;
 	goblin.LVL = 0;
 	goblin.DMG = 0;
@@ -523,7 +518,7 @@ int main(int argc, char* argv[]){
 	goblin.relation = 0;
 
 
-	struct object stan;
+	object stan;
 	stan.HP = -1;
 	stan.LVL = 0;
 	stan.DMG = -1;
@@ -533,7 +528,7 @@ int main(int argc, char* argv[]){
 	stan.rectangle = stanrect;
 	stan.texture = stanTexture;
 
-	struct object extraobject;
+	object extraobject;
 
 
 	objects = loadmap(&objects, bgrect, "maps/map1.txt");

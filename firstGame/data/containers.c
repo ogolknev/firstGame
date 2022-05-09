@@ -1,51 +1,6 @@
-#ifndef CONTAINERS_H_
-#define CONTAINERS_H_
 
+#include "containers.h"
 
-struct animation{
-	unsigned short int angle;
-	unsigned int timer[5];
-	SDL_Point center;
-	SDL_Rect animationRect;
-};
-
-struct item{
-	int ID;
-	int DMG;
-	struct animation animation;
-	unsigned int recharge;
-	SDL_Rect rectangle;
-	SDL_Texture *texture;
-};
-
-struct object{
-	int HP;
-	int DMG;
-	short int LVL;
-	int ID;
-	int XP;
-	unsigned int movespeed;
-	char direction;
-	char restofway;
-	int takendamage;
-	unsigned short int attackrecharge;
-	char relation;
-	struct item weapon;
-	struct animation animation;
-	SDL_Rect damageEffectRect;
-	SDL_Texture *damageEffectTexture;
-	SDL_Rect rectangle;
-	SDL_Texture *texture, *death;
-};
-
-typedef struct element{
-	struct object data;
-    struct element *next, *previous, *head, *tail;
-}container;
-
-container *extraContainer2, *extraContainer3, *addElement;
-struct object extraObject2;
-int counter, counter2, counter3;
 
 container *newcontainer(){
 	extraContainer2 = malloc(sizeof(container));
@@ -87,7 +42,7 @@ int element_count(container **headcontainer){
 //stack
 
 //function to add a new element to the stack
-void addtostack(container **headstack, struct object data){
+void addtostack(container **headstack, object data){
 	addElement = newcontainer();
     extraContainer2 = *headstack;
     if(element_count(&extraContainer2) == 0){
@@ -112,7 +67,7 @@ void addtostack(container **headstack, struct object data){
 }
 
 //function to pop an element from the stack
-struct object getstack(container **headstack){
+object getstack(container **headstack){
 	extraContainer2 = *headstack;
 	extraObject2 = extraContainer2->data;
     if (element_count(&extraContainer2) == 1){
@@ -138,7 +93,7 @@ struct object getstack(container **headstack){
 //queue
 
 //function to add a new element to the queue
-void addtoqueue(container **headqueue, struct object data){
+void addtoqueue(container **headqueue, object data){
 	addElement = newcontainer();
     extraContainer2 = *headqueue;
     if(element_count(&extraContainer2) == 0){
@@ -163,7 +118,7 @@ void addtoqueue(container **headqueue, struct object data){
 }
 
 //function to pop an element from the queue
-struct object getqueue(container **headqueue){
+object getqueue(container **headqueue){
     extraContainer2 = *headqueue;
     if (element_count(&extraContainer2) == 1){
         extraObject2 = extraContainer2->data;
@@ -190,7 +145,7 @@ struct object getqueue(container **headqueue){
 //list
 
 //function to add a new element to the beginning of the list
-void addfirst(container **headlist, struct object data){
+void addfirst(container **headlist, object data){
     extraContainer2 = *headlist;
     addElement = newcontainer();
     addElement->data = data;
@@ -205,7 +160,7 @@ void addfirst(container **headlist, struct object data){
 }
 
 //function to add a new element to the end of the list
-void addlast(container **headlist, struct object data){
+void addlast(container **headlist, object data){
     extraContainer3 = *headlist;
     addElement = newcontainer();
     addElement->data = data;
@@ -220,7 +175,7 @@ void addlast(container **headlist, struct object data){
 }
 
 //function to add a new element after the specified number
-void addtolist(container **headlist, struct object data, int number){
+void addtolist(container **headlist, object data, int number){
     addElement = newcontainer();
     extraContainer2 = *headlist;
     if(element_count(&extraContainer2) == 0){
@@ -326,6 +281,3 @@ container *getlist(container **headlist, int number){
     }
     return extraContainer2;
 }
-
-
-#endif /* CONTAINERS_H_ */
