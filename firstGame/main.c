@@ -20,74 +20,23 @@ int main(int argc, char* argv[]){
 	mainEvent = malloc(sizeof(SDL_Event));
 	damageIndicator = malloc(20*sizeof(char));
 	unmoving = calloc(4,sizeof(int));
-	mainFont = TTF_OpenFont("fonts/bauhaus.ttf", 200);
+	mainFont = TTF_OpenFont("fonts/bauhaus.ttf", 500);
 
 	load_textures();
 	load_items();
-
+	load_objects();
 
 	objects = newcontainer();
 	swordflip = SDL_FLIP_VERTICAL;
 
-	object player;
-	player.LVL = 0;
-	player.HP = 50;
-	player.DMG = 2;
-	player.ID = -1;
-	player.direction = 0;
-	player.attackrecharge = 100;
-	player.restofway = 0;
-	player.takendamage = 0;
-	player.damageEffectTexture = bloodTexture;
-	player.damageEffectRect = bloodRect;
-	player.rectangle = playerRect;
-	player.texture = playerTexture;
-	player.weapon = initial_sword;
-	player.weapon.animation.angle = 360;
-	player.movespeed = 350;
-	player.death = goblinDeath;
-	player.relation = 1;
-	player.pxpart = 0;
-	player.pxcount = 0;
-
-
 	addtolist(&objects, player, 0);
 
-
-	object goblin;
-	goblin.HP = 20;
-	goblin.LVL = 0;
-	goblin.DMG = 0;
-	goblin.attackrecharge = 100;
-	goblin.direction = 0;
-	goblin.restofway = 0;
-	goblin.takendamage = 0;
-	goblin.rectangle = goblinRect;
-	goblin.texture = goblinTexture;
-	goblin.weapon = goblin_stick;
-	goblin.damageEffectTexture = bloodTexture;
-	goblin.damageEffectRect = bloodRect;
-	goblin.death = goblinDeath;
-	goblin.weapon.animation.angle = 360;
-	goblin.movespeed = 300;
-	goblin.relation = 0;
-	goblin.pxpart = 0;
-	goblin.pxcount = 0;
-
-
-	object stan;
-	stan.HP = -1;
-	stan.LVL = 0;
-	stan.DMG = -1;
-	stan.direction = -1;
-	stan.restofway = 0;
-	stan.takendamage = 0;
-	stan.texture = stan0_Txtr;
-	stan.rectangle = stan0_Rct;
-
-
 	objects = loadmap(&objects, backgroundRect, "maps/map1.txt");
+	item_spawn(GMS, &objects, backgroundRect, 3, 5);
+	item_spawn(souls_slayer, &objects, backgroundRect, 3, 7);
+	item_spawn(hand, &objects, backgroundRect, 3, 7);
 	multiSpawn(mainRender, &objects, goblin, backgroundRect, 27);
+	multiSpawn(mainRender, &objects, alien, backgroundRect, 5);
 	multiSpawn(mainRender, &objects, stan, backgroundRect, 0);
 	printf("%i\n", element_count(&objects));
 

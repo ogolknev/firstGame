@@ -29,6 +29,10 @@ void load_textures(){
 	goblinRect.h = cellsize;
 	goblinRect.w = cellsize;
 
+	alienTexture = IMG_LoadTexture(mainRender, "textures/alien.png");
+	alienRect.h = cellsize;
+	alienRect.w = cellsize;
+
 
 	//effects
 	bloodTexture = IMG_LoadTexture(mainRender,"textures/blood.png");
@@ -37,6 +41,10 @@ void load_textures(){
 
 
 	//weapons
+	kick_Txtr = IMG_LoadTexture(mainRender, "textures/kick.png");
+	hand_Rct.h = cellsize;
+	hand_Rct.w = cellsize;
+
 	weapon0_Txtr = IMG_LoadTexture(mainRender, "textures/sword.png");
 	weapon0_Rct.h = cellsize;
 	weapon0_Rct.w = cellsize;
@@ -48,6 +56,10 @@ void load_textures(){
 	weapon2_Txtr = IMG_LoadTexture(mainRender, "textures/MEGGGA_GGGOOOOBLIN_STTTTIIICKKKK.png");
 	weapon2_Rct.h = cellsize;
 	weapon2_Rct.w = cellsize;
+
+	weapon4_Txtr = IMG_LoadTexture(mainRender, "textures/souls_slayer.png");
+	weapon4_Rct.h = cellsize;
+	weapon4_Rct.w = cellsize;
 
 
 }

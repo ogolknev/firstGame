@@ -25,6 +25,8 @@ SDL_Colour extraColour;
 TTF_Font *mainFont;
 SDL_RendererFlip swordflip;
 
+item extraItem;
+
 const Uint8 *keystate;
 
 object extraObject;

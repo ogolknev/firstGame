@@ -9,6 +9,7 @@
 #include "types.h"
 #include "variables.h"
 #include "containers.h"
+#include "objects.h"
 
 
 int initSDL();
@@ -16,6 +17,10 @@ int initSDL();
 int digit_count(int number);
 
 int limitedrandom(int botEdge, int topEdge, int extra);
+
+void spawn(object object, container **headcontainer, SDL_Rect bgrect, int x, int y);
+
+void item_spawn(item item, container **headcontainer, SDL_Rect bgrect, int x, int y);
 
 void randSpawn(object object, container **headcontainer, SDL_Rect bgrect, int extra);
 
@@ -36,6 +41,10 @@ object playerMoving(object prect, int *trafficbans, const Uint8 *keyboardState);
 container *attack(int attackernumber, container **headcontainer);
 
 container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path);
+
+void take_weapon(int number, container **headcontainer);
+
+void LVLup(int number, container **headcontainer);
 
 void attackanimation(object *attacker, SDL_RendererFlip flip);
 

@@ -16,6 +16,7 @@
 #include "textures.h"
 #include "items.h"
 #include "main_functions.h"
+#include "objects.h"
 
 
 #endif /* INCLUDES_H_ */

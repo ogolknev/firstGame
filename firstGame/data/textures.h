@@ -17,6 +17,8 @@ SDL_Rect backgroundRect;
 SDL_Texture *stan0_Txtr;
 SDL_Rect stan0_Rct;
 
+SDL_Rect item_Rct;
+
 
 //entities
 SDL_Texture *playerTexture;
@@ -26,6 +28,9 @@ SDL_Texture *goblinTexture;
 SDL_Texture *goblinDeath;
 SDL_Rect goblinRect;
 
+SDL_Texture *alienTexture;
+SDL_Rect alienRect;
+
 
 //effects
 SDL_Texture *bloodTexture;
@@ -33,6 +38,9 @@ SDL_Rect bloodRect;
 
 
 //weapons
+SDL_Texture *kick_Txtr;
+SDL_Rect hand_Rct;
+
 SDL_Texture *weapon0_Txtr;
 SDL_Rect weapon0_Rct;
 
@@ -41,6 +49,9 @@ SDL_Rect weapon1_Rct;
 
 SDL_Texture *weapon2_Txtr;
 SDL_Rect weapon2_Rct;
+
+SDL_Texture *weapon4_Txtr;
+SDL_Rect weapon4_Rct;
 
 
 #endif /* TEXTURES_H_ */

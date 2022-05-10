@@ -33,13 +33,35 @@ int limitedrandom(int botEdge, int topEdge, int extra){
 }
 
 
-void randSpawn(object object, container **headcontainer, SDL_Rect bgrect, int extra){
+void spawn(object object, container **headcontainer, SDL_Rect bgrect, int x, int y){
 	extraContainer = *headcontainer;
-	object.rectangle.x = bgrect.x + limitedrandom(1, 19, extra*752) * 32;
-	object.rectangle.y = bgrect.y + (limitedrandom(1, 19, extra * extra * 257257)) * 32;
+	object.rectangle.x = bgrect.x + x * cellsize;
+	object.rectangle.y = bgrect.y + y * cellsize;
 	object.ID = element_count(&extraContainer);
 	addlast(&extraContainer, object);
+}
+
+
+void item_spawn(item item, container **headcontainer, SDL_Rect bgrect, int x, int y){
+		extraContainer = *headcontainer;
+		item_object.weapon = item;
+		item_object.rectangle.h = item_object.weapon.rectangle.h;
+		item_object.rectangle.w = item_object.weapon.rectangle.w;
+		item_object.rectangle.x = bgrect.x + x * cellsize;
+		item_object.rectangle.y = bgrect.y + y * cellsize;
+		item_object.ID = element_count(&extraContainer);
+		item_object.LVL = -2;
+		item_object.texture = item_object.weapon.texture;
+		addlast(&extraContainer, item_object);
+	}
+
+
+void randSpawn(object object, container **headcontainer, SDL_Rect bgrect, int extra){
 	extraContainer = *headcontainer;
+	object.rectangle.x = bgrect.x + limitedrandom(1, 19, extra*752) * cellsize;
+	object.rectangle.y = bgrect.y + (limitedrandom(1, 19, extra * extra * 257257)) * cellsize;
+	object.ID = element_count(&extraContainer);
+	addlast(&extraContainer, object);
 }
 
 
@@ -63,6 +85,7 @@ SDL_Texture *newtext(char *text, SDL_Renderer *render, int red, int green, int b
 }
 
 
+//moving
 int *calculateTrafficBans(object entity, container **headcontainer){
 	extraContainer = *headcontainer;
 	unmoving[0] = 0;
@@ -72,7 +95,7 @@ int *calculateTrafficBans(object entity, container **headcontainer){
 	for(j = 0; j < element_count(&extraContainer); j++){
 		if(abs(entity.rectangle.x - getlist(&extraContainer, j)->data.rectangle.x) <= 32
 		&& abs(entity.rectangle.y - getlist(&extraContainer, j)->data.rectangle.y) <= 32
-		&& getlist(&extraContainer, j)->data.LVL != -1){
+		&& getlist(&extraContainer, j)->data.LVL > -1 ){
 			if(entity.rectangle.x - getlist(&extraContainer, j)->data.rectangle.x == 32){
 				if(entity.rectangle.y == getlist(&extraContainer, j)->data.rectangle.y){
 					unmoving[3] = 4;
@@ -214,7 +237,7 @@ int calculateEntityMoving(object entity, container **headcontainer, int randvar)
 					extravar++;
 				}
 			}
-			return unmoving[limitedrandom(0,extravar + 1, time(NULL) * randvar+extravar)];
+			return unmoving[limitedrandom(0,extravar + 1, time(NULL) * randvar * extravar * entity.ID)];
 		}
 		else return calculatechasing(unmoving, entity, &extraContainer);
 	}
@@ -338,12 +361,13 @@ object playerMoving(object prect, int *trafficbans, const Uint8 *keyboardState){
 }
 
 
+
 container *attack(int attackernumber, container **headcontainer){
 	extraContainer = *headcontainer;
 	extraObject = getlist(&extraContainer, attackernumber)->data;
 	if(currenttime - getlist(&extraContainer, attackernumber)->data.attackrecharge >=
 	   getlist(&extraContainer, attackernumber)->data.weapon.recharge * 5
-	&& getlist(&extraContainer, attackernumber)->data.LVL != -1){
+	&& getlist(&extraContainer, attackernumber)->data.LVL > -1){
 		for(j = 0; j < element_count(&extraContainer); j++){
 			if(abs(extraObject.rectangle.x - getlist(&extraContainer, j)->data.rectangle.x) <= 32
 			&& abs(extraObject.rectangle.y - getlist(&extraContainer, j)->data.rectangle.y) <= 32
@@ -363,8 +387,10 @@ container *attack(int attackernumber, container **headcontainer){
 				if(extraObject.ID == -1 && getlist(&extraContainer, j)->data.relation > -1) getlist(&extraContainer, j)->data.relation--;
 				if(getlist(&extraContainer, j)->data.HP <= 0){
 					getlist(&extraContainer, j)->data.animation.timer[2] = currenttime;
+					getlist(&extraContainer, attackernumber)->data.XP += getlist(&extraContainer, j)->data.LVL * 100;
 					getlist(&extraContainer, j)->data.LVL = -1;
 					getlist(&extraContainer, j)->data.direction = -1;
+					getlist(&extraContainer, j)->data.HP = -2;
 					getlist(&extraContainer, j)->data.texture = getlist(&extraContainer, j)->data.death;
 				}
 			}
@@ -377,28 +403,21 @@ container *attack(int attackernumber, container **headcontainer){
 
 container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
 	extraContainer = *headcontainer;
-	extraTexture = IMG_LoadTexture(mainRender,"Textures/stan.png");
-	extraObject.rectangle.h = cellsize;
-	extraObject.rectangle.w = cellsize;
 	extraStream = fopen(path, "r");
 	fscanf(extraStream, "%c", &extraSymbol);
 	while(feof(extraStream) == 0){
 		while(extraSymbol != '\\'){
 			if(extraSymbol == 'x'){
+				extraObject = stan;
 				extraObject.rectangle.x = bgrect.x + extravar * cellsize;
 				extraObject.rectangle.y = bgrect.y + extravar2 * cellsize;
-				extraObject.DMG = -1;
-				extraObject.HP = -1;
-				extraObject.LVL = 0;
-				extraObject.direction = -1;
 				extraObject.ID = element_count(&extraContainer);
-				extraObject.texture = extraTexture;
 				addlast(&extraContainer, extraObject);
 			}
-			extravar++;
+			extravar++; //x
 			fscanf(extraStream, "%c", &extraSymbol);
 		}
-		extravar2++;
+		extravar2++; //y
 		extravar = -1;
 		fscanf(extraStream, "%c", &extraSymbol);
 	}
@@ -408,10 +427,40 @@ container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
 }
 
 
+void take_weapon(int number, container **headcontainer){
+	extraContainer = *headcontainer;
+	if(getlist(&extraContainer, number)->data.LVL == -2){
+		extraItem = getlist(&extraContainer, 0)->data.weapon;
+		getlist(&extraContainer, 0)->data.weapon = getlist(&extraContainer, number)->data.weapon;
+		getlist(&extraContainer, number)->data.weapon = extraItem;
+		getlist(&extraContainer, number)->data.rectangle = getlist(&extraContainer, number)->data.weapon.rectangle;
+		getlist(&extraContainer, number)->data.rectangle.x = getlist(&extraContainer, 0)->data.rectangle.x;
+		getlist(&extraContainer, number)->data.rectangle.y = getlist(&extraContainer, 0)->data.rectangle.y;
+		getlist(&extraContainer, number)->data.texture = extraItem.texture;
+	}
+}
+
+void LVLup(int number, container **headcontainer){
+	extraContainer = *headcontainer;
+	if(getlist(&extraContainer, number)->data.LVL > -1
+	&& getlist(&extraContainer, number)->data.XP >= 1000
+	* (getlist(&extraContainer, number)->data.LVL + 1 )){
+		printf("ID: %i\nLVL: %i\n", getlist(&extraContainer, number)->data.ID, getlist(&extraContainer, number)->data.LVL);
+		getlist(&extraContainer, number)->data.XP -= 1000 * (getlist(&extraContainer, number)->data.LVL + 1 );
+		getlist(&extraContainer, number)->data.LVL++;
+		getlist(&extraContainer, number)->data.DMG +=
+				getlist(&extraContainer, number)->data.LVL
+				* getlist(&extraContainer, number)->data.DMG / 10;
+		getlist(&extraContainer, number)->data.HP +=
+				getlist(&extraContainer, number)->data.LVL
+				* getlist(&extraContainer, number)->data.HP / 10;
+	}
+}
+
 void attackanimation(object *attacker, SDL_RendererFlip flip){
 	extraPoint = attacker->weapon.animation.center;
 	extraRect = attacker->weapon.rectangle;
-	extraRect.x = attacker->rectangle.x + 8;
+	extraRect.x = attacker->rectangle.x;
 	extraRect.y = attacker->rectangle.y + 16;
 	SDL_RenderCopyEx(mainRender, attacker->weapon.texture, NULL,
 				 	 &extraRect, attacker->weapon.animation.angle,
@@ -419,23 +468,24 @@ void attackanimation(object *attacker, SDL_RendererFlip flip){
 }
 
 
+
 void maingame(){
 	//rendering unalive
 	for(i = 0; i < element_count(&objects) ; i++){
 		extraRect = getlist(&objects, i)->data.rectangle;
-		if(getlist(&objects, i)->data.LVL == -1)SDL_RenderCopy(mainRender, getlist(&objects, i)->data.texture, NULL, &extraRect);
+		if(getlist(&objects, i)->data.LVL < 0)SDL_RenderCopy(mainRender, getlist(&objects, i)->data.texture, NULL, &extraRect);
 	}
 
 
 	//rendering alive
 	for(i = 0; i < element_count(&objects) ; i++){
 		extraRect = getlist(&objects, i)->data.rectangle;
-		if(getlist(&objects, i)->data.LVL != -1)SDL_RenderCopy(mainRender, getlist(&objects, i)->data.texture, NULL, &extraRect);
+		if(getlist(&objects, i)->data.LVL >= 0)SDL_RenderCopy(mainRender, getlist(&objects, i)->data.texture, NULL, &extraRect);
 	}
 
 
 	//player attack
-	if(keystate[SDL_SCANCODE_F]){
+	if(keystate[SDL_SCANCODE_F] && getlist(&objects, 0)->data.weapon.using == 0){
 		getlist(&objects, 0)->data.animation.timer[4] = currenttime;
 		getlist(&objects, 0)->data.weapon.using = 1;
 	}
@@ -464,7 +514,7 @@ void maingame(){
 
 			//damage indicator
 			if(getlist(&objects, i)->data.takendamage > 0){
-				itoa(getlist(&objects, i)->data.takendamage, damageIndicator, 100);
+				itoa(getlist(&objects, i)->data.takendamage, damageIndicator, 10);
 				if(currenttime - getlist(&objects, i)->data.animation.timer[1] > 15){
 					getlist(&objects, i)->data.animation.animationRect.y -= 2;
 					getlist(&objects, i)->data.animation.timer[1] = currenttime;
@@ -485,7 +535,7 @@ void maingame(){
 			if(abs(getlist(&objects, 0)->data.rectangle.x - getlist(&objects, i)->data.rectangle.x) <= 32
 			&& abs(getlist(&objects, 0)->data.rectangle.y - getlist(&objects, i)->data.rectangle.y) <= 32
 			&& getlist(&objects, 0)->data.ID == -1 && i != 0 && getlist(&objects, i)->data.relation == -1
-			&& getlist(&objects, i)->data.weapon.using == 0)
+			&& getlist(&objects, i)->data.weapon.using == 0 && getlist(&objects, 0)->data.XP != -1)
 			{
 				getlist(&objects, i)->data.animation.timer[4] = currenttime;
 				getlist(&objects, i)->data.weapon.using = 1;
@@ -498,7 +548,7 @@ void maingame(){
 			getlist(&objects, i)->data.weapon.using = 0;
 		}
 
-
+		LVLup(i, &objects);
 
 
 
@@ -512,9 +562,19 @@ void maingame(){
 			attackanimation(&extraObject, swordflip);
 		}
 
+		if(keystate[SDL_SCANCODE_E] && currenttime - getlist(&objects, 0)->data.weapon.animation.timer[0] > 1000){
+			if(abs(getlist(&objects, 0)->data.rectangle.x - getlist(&objects, i)->data.rectangle.x) <= 32
+			&& abs(getlist(&objects, 0)->data.rectangle.y - getlist(&objects, i)->data.rectangle.y) <= 32
+			&& getlist(&objects, i)->data.LVL == -2){
+				take_weapon(i, &objects);
+				getlist(&objects, 0)->data.weapon.animation.timer[0] = currenttime;
+			}
+		}
+
 
 		//removal of corpses
-		if(currenttime - getlist(&objects, i)->data.animation.timer[2] >= 2000 && getlist(&objects, i)->data.LVL == -1){
+		if(currenttime - getlist(&objects, i)->data.animation.timer[2] >= 2000 && getlist(&objects, i)->data.LVL == -1
+		&& getlist(&objects, i)->data.HP == -2){
 			delelement(&objects, i);
 
 		}
