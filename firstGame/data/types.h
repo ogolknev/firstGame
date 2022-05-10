@@ -4,7 +4,7 @@
 
 typedef struct animations{
 	unsigned short int angle;
-	Uint32 timer[5];
+	Uint64 timer[5];
 	SDL_Point center;
 	SDL_Rect animationRect;
 }animation;
@@ -13,7 +13,9 @@ typedef struct items{
 	int ID;
 	int DMG;
 	animation animation;
-	unsigned int recharge;
+	float recharge;
+	_Bool using;
+	float attackdelay;
 	SDL_Rect rectangle;
 	SDL_Texture *texture;
 }item;
@@ -30,7 +32,7 @@ typedef struct objects{
 	float pxpart;
 	int pxcount;
 	int takendamage;
-	unsigned short int attackrecharge;
+	Uint64 attackrecharge;
 	char relation;
 	item weapon;
 	animation animation;

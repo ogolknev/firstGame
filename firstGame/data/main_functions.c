@@ -232,7 +232,7 @@ object entityMoving(object entity, container **headcontainer, int randvar){
 		}
 	}
 	else if(entity.direction == 1){
-		if((currenttime - entity.animation.timer[3]) > 10){
+		if((currenttime - entity.animation.timer[3]) > 15){
 			if(entity.pxpart + entity.movespeed / 200 - (int)entity.pxpart >= 1 + (int)(entity.movespeed / 200)){
 				entity.pxcount = 1;
 				entity.pxpart -= (int)entity.pxpart;
@@ -249,7 +249,7 @@ object entityMoving(object entity, container **headcontainer, int randvar){
 		}
 	}
 	else if(entity.direction == 2){
-		if((currenttime - entity.animation.timer[3]) > 10){
+		if((currenttime - entity.animation.timer[3]) > 15){
 			if(entity.pxpart + entity.movespeed / 200 - (int)entity.pxpart >= 1 + (int)(entity.movespeed / 200)){
 				entity.pxcount = 1;
 				entity.pxpart -= (int)entity.pxpart;
@@ -266,7 +266,7 @@ object entityMoving(object entity, container **headcontainer, int randvar){
 		}
 	}
 	else if(entity.direction == 3){
-		if((currenttime - entity.animation.timer[3]) > 10){
+		if((currenttime - entity.animation.timer[3]) > 15){
 			if(entity.pxpart + entity.movespeed / 200 - (int)entity.pxpart >= 1 + (int)(entity.movespeed / 200)){
 				entity.pxcount = 1;
 				entity.pxpart -= (int)entity.pxpart;
@@ -283,7 +283,7 @@ object entityMoving(object entity, container **headcontainer, int randvar){
 		}
 	}
 	else if(entity.direction == 4){
-		if((currenttime - entity.animation.timer[3]) > 10){
+		if((currenttime - entity.animation.timer[3]) > 15){
 			if(entity.pxpart + entity.movespeed / 200 - (int)entity.pxpart >= 1 + (int)(entity.movespeed / 200)){
 				entity.pxcount = 1;
 				entity.pxpart -= (int)entity.pxpart;
@@ -338,10 +338,12 @@ object playerMoving(object prect, int *trafficbans, const Uint8 *keyboardState){
 }
 
 
-container *preattack(int attackernumber, container **headcontainer){
+container *attack(int attackernumber, container **headcontainer){
 	extraContainer = *headcontainer;
 	extraObject = getlist(&extraContainer, attackernumber)->data;
-	if(getlist(&extraContainer, attackernumber)->data.attackrecharge == 0 && getlist(&extraContainer, attackernumber)->data.LVL != -1){
+	if(currenttime - getlist(&extraContainer, attackernumber)->data.attackrecharge >=
+	   getlist(&extraContainer, attackernumber)->data.weapon.recharge * 5
+	&& getlist(&extraContainer, attackernumber)->data.LVL != -1){
 		for(j = 0; j < element_count(&extraContainer); j++){
 			if(abs(extraObject.rectangle.x - getlist(&extraContainer, j)->data.rectangle.x) <= 32
 			&& abs(extraObject.rectangle.y - getlist(&extraContainer, j)->data.rectangle.y) <= 32
@@ -349,9 +351,9 @@ container *preattack(int attackernumber, container **headcontainer){
 				getlist(&extraContainer, j)->data.HP -= extraObject.DMG + extraObject.weapon.DMG;
 				getlist(&extraContainer, j)->data.takendamage = extraObject.DMG + extraObject.weapon.DMG;
 				getlist(&extraContainer, attackernumber)->data.weapon.animation.angle = 0;
-				getlist(&extraContainer, j)->data.animation.timer[0] = 60;
-				getlist(&extraContainer, j)->data.animation.timer[1] = SDL_GetTicks();
-				getlist(&extraContainer, attackernumber)->data.attackrecharge = getlist(&extraContainer, attackernumber)->data.weapon.recharge;
+				getlist(&extraContainer, j)->data.animation.timer[0] = currenttime;
+				getlist(&extraContainer, j)->data.animation.timer[1] = currenttime;
+				getlist(&extraContainer, attackernumber)->data.attackrecharge = currenttime;
 				getlist(&extraContainer, j)->data.damageEffectRect.x = getlist(&extraContainer, j)->data.rectangle.x;
 				getlist(&extraContainer, j)->data.damageEffectRect.y = getlist(&extraContainer, j)->data.rectangle.y;
 				getlist(&extraContainer, j)->data.animation.animationRect.x = getlist(&extraContainer, j)->data.rectangle.x + cellsize/2;
@@ -360,24 +362,18 @@ container *preattack(int attackernumber, container **headcontainer){
 				getlist(&extraContainer, j)->data.animation.animationRect.h = 12;
 				if(extraObject.ID == -1 && getlist(&extraContainer, j)->data.relation > -1) getlist(&extraContainer, j)->data.relation--;
 				if(getlist(&extraContainer, j)->data.HP <= 0){
-					getlist(&extraContainer, j)->data.animation.timer[2] = 1000;
+					getlist(&extraContainer, j)->data.animation.timer[2] = currenttime;
 					getlist(&extraContainer, j)->data.LVL = -1;
 					getlist(&extraContainer, j)->data.direction = -1;
 					getlist(&extraContainer, j)->data.texture = getlist(&extraContainer, j)->data.death;
 				}
 			}
 		}
-
 		getlist(&extraContainer, attackernumber)->data.weapon.animation.angle = 0;
-		getlist(&extraContainer, attackernumber)->data.attackrecharge = getlist(&extraContainer, attackernumber)->data.weapon.recharge;
 	}
 	return *headcontainer;
 }
 
-//container *attack(container **headcontainer){
-//	extraContainer = *headcontainer;
-
-//}
 
 container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
 	extraContainer = *headcontainer;
@@ -412,9 +408,7 @@ container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
 }
 
 
-int attackanimation(object *attacker, SDL_RendererFlip flip, int angle){
-	attacker->weapon.animation.angle = angle;
-	attacker->weapon.animation.angle += 720/attacker->weapon.recharge;
+void attackanimation(object *attacker, SDL_RendererFlip flip){
 	extraPoint = attacker->weapon.animation.center;
 	extraRect = attacker->weapon.rectangle;
 	extraRect.x = attacker->rectangle.x + 8;
@@ -422,5 +416,108 @@ int attackanimation(object *attacker, SDL_RendererFlip flip, int angle){
 	SDL_RenderCopyEx(mainRender, attacker->weapon.texture, NULL,
 				 	 &extraRect, attacker->weapon.animation.angle,
 					 &extraPoint, flip);
-	return attacker->weapon.animation.angle;
+}
+
+
+void maingame(){
+	//rendering unalive
+	for(i = 0; i < element_count(&objects) ; i++){
+		extraRect = getlist(&objects, i)->data.rectangle;
+		if(getlist(&objects, i)->data.LVL == -1)SDL_RenderCopy(mainRender, getlist(&objects, i)->data.texture, NULL, &extraRect);
+	}
+
+
+	//rendering alive
+	for(i = 0; i < element_count(&objects) ; i++){
+		extraRect = getlist(&objects, i)->data.rectangle;
+		if(getlist(&objects, i)->data.LVL != -1)SDL_RenderCopy(mainRender, getlist(&objects, i)->data.texture, NULL, &extraRect);
+	}
+
+
+	//player attack
+	if(keystate[SDL_SCANCODE_F]){
+		getlist(&objects, 0)->data.animation.timer[4] = currenttime;
+		getlist(&objects, 0)->data.weapon.using = 1;
+	}
+	trafficbans = calculateTrafficBans(getlist(&objects, 0)->data, &objects);
+	getlist(&objects, 0)->data = playerMoving(getlist(&objects, 0)->data, trafficbans, keystate);
+
+
+	//action cycle
+	for(i = 0; i < element_count(&objects); i++){
+
+
+		//entities moving
+		getlist(&objects, i)->data = entityMoving(getlist(&objects, i)->data, &objects, i);
+
+
+		//rendering effects
+		if(getlist(&objects, i)->data.takendamage > 0){
+
+
+			//damage effect
+			if(currenttime - getlist(&objects, i)->data.animation.timer[0] < 250){
+				extraRect = getlist(&objects, i)->data.damageEffectRect;
+				SDL_RenderCopy(mainRender, getlist(&objects, i)->data.damageEffectTexture, NULL, &extraRect);
+			}
+
+
+			//damage indicator
+			if(getlist(&objects, i)->data.takendamage > 0){
+				itoa(getlist(&objects, i)->data.takendamage, damageIndicator, 100);
+				if(currenttime - getlist(&objects, i)->data.animation.timer[1] > 15){
+					getlist(&objects, i)->data.animation.animationRect.y -= 2;
+					getlist(&objects, i)->data.animation.timer[1] = currenttime;
+				}
+				extraRect = getlist(&objects, i)->data.animation.animationRect;
+				extraTexture = newtext(damageIndicator, mainRender, 255, 255, 255);
+				SDL_RenderCopy(mainRender, extraTexture, NULL, &extraRect);
+				SDL_DestroyTexture(extraTexture);
+
+				if(currenttime - getlist(&objects, i)->data.animation.timer[0] >= 800){
+					getlist(&objects, i)->data.takendamage = 0;
+				}
+			}
+		}
+
+		//attacks of entities
+		if(getlist(&objects, i)->data.DMG != -1){
+			if(abs(getlist(&objects, 0)->data.rectangle.x - getlist(&objects, i)->data.rectangle.x) <= 32
+			&& abs(getlist(&objects, 0)->data.rectangle.y - getlist(&objects, i)->data.rectangle.y) <= 32
+			&& getlist(&objects, 0)->data.ID == -1 && i != 0 && getlist(&objects, i)->data.relation == -1
+			&& getlist(&objects, i)->data.weapon.using == 0)
+			{
+				getlist(&objects, i)->data.animation.timer[4] = currenttime;
+				getlist(&objects, i)->data.weapon.using = 1;
+			}
+		}
+
+		if(getlist(&objects, i)->data.weapon.using == 1
+		&& currenttime - getlist(&objects, i)->data.animation.timer[4] >= getlist(&objects, i)->data.weapon.attackdelay * 1000){
+			objects = attack(i, &objects);
+			getlist(&objects, i)->data.weapon.using = 0;
+		}
+
+
+
+
+
+		//attack animation
+		if(getlist(&objects, i)->data.weapon.animation.angle < 360){
+			if(currenttime - getlist(&objects, i)->data.attackrecharge >= 15){
+				getlist(&objects, i)->data.attackrecharge = currenttime;
+				getlist(&objects, i)->data.weapon.animation.angle += 1440/getlist(&objects, i)->data.weapon.recharge;
+			}
+			extraObject = getlist(&objects, i)->data;
+			attackanimation(&extraObject, swordflip);
+		}
+
+
+		//removal of corpses
+		if(currenttime - getlist(&objects, i)->data.animation.timer[2] >= 2000 && getlist(&objects, i)->data.LVL == -1){
+			delelement(&objects, i);
+
+		}
+	}
+
 }

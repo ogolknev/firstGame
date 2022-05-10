@@ -33,12 +33,13 @@ object entityMoving(object entity, container **headcontainer, int randvar);
 
 object playerMoving(object prect, int *trafficbans, const Uint8 *keyboardState);
 
-container *preattack(int attackernumber, container **headcontainer);
+container *attack(int attackernumber, container **headcontainer);
 
 container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path);
 
-int attackanimation(object *attacker, SDL_RendererFlip flip, int angle);
+void attackanimation(object *attacker, SDL_RendererFlip flip);
 
+void maingame();
 
 
 #endif /* MAIN_FUNCTIONS_H_ */

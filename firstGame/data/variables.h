@@ -10,18 +10,22 @@ const int cellsize;
 int run;
 int *trafficbans;
 int i, j, extravar, extravar2, *unmoving;
-Uint32 currenttime;
+Uint64 currenttime;
 char extraSymbol;
+char* damageIndicator;
 
 SDL_Window *mainWindow;
 SDL_Renderer *mainRender;
 SDL_Event *mainEvent;
 SDL_Rect extraRect;
-SDL_Point extraPoint;
+SDL_Point extraPoint, extraPoint2;
 SDL_Texture *extraTexture, *extraTexture2;
 SDL_Surface *extraSurface;
 SDL_Colour extraColour;
 TTF_Font *mainFont;
+SDL_RendererFlip swordflip;
+
+const Uint8 *keystate;
 
 object extraObject;
 container *objects;
