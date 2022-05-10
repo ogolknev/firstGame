@@ -13,6 +13,9 @@
 #include "items.h"
 #include "types.h"
 #include "containers.h"
+#include "textures.h"
+#include "items.h"
+#include "main_functions.h"
 
 
 #endif /* INCLUDES_H_ */

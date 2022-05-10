@@ -238,7 +238,6 @@ void dellast(container **headlist){
 //function to remove the specified element
 void delelement(container **headlist, int number){
 	extraContainer3 = *headlist;
-    struct element *extpointer;
     counter2 = 0;
     if(number == 0){
         delfirst(&extraContainer3);
@@ -249,12 +248,12 @@ void delelement(container **headlist, int number){
     else {
         while (extraContainer3->next != NULL) {
             if (counter2 == number) {
-            	extpointer = extraContainer3;
+            	extraContainer2 = extraContainer3;
             	extraContainer3->previous->next = extraContainer3->next;
             	extraContainer3->next->previous = extraContainer3->previous;
             	counter2++;
                 extraContainer3 = extraContainer3->next;
-                free(extpointer);
+                free(extraContainer2);
 
             }
             else{

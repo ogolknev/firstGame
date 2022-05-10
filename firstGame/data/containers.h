@@ -2,13 +2,10 @@
 #ifndef CONTAINERS_H_
 #define CONTAINERS_H_
 #include "types.h"
+#include "variables.h"
 
 
-container *objects;
-container *extraContainer;
-container *extraContainer2, *extraContainer3, *addElement;
-object extraObject2;
-int counter, counter2, counter3;
+
 
 
 container *newcontainer();

@@ -4,7 +4,7 @@
 
 typedef struct animations{
 	unsigned short int angle;
-	unsigned int timer[5];
+	Uint32 timer[5];
 	SDL_Point center;
 	SDL_Rect animationRect;
 }animation;
@@ -24,9 +24,11 @@ typedef struct objects{
 	short int LVL;
 	int ID;
 	int XP;
-	unsigned int movespeed;
+	float movespeed;
 	char direction;
 	char restofway;
+	float pxpart;
+	int pxcount;
 	int takendamage;
 	unsigned short int attackrecharge;
 	char relation;
