@@ -1,29 +1,31 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 #include <SDL.h>
+#include <SDL_mixer.h>
 
-typedef struct animations{
+typedef struct Animations{
 	unsigned short int angle;
 	Uint64 timer[5];
 	SDL_Point center;
 	SDL_Rect animationRect;
-}animation;
+}Animation;
 
-typedef struct items{
+typedef struct Items{
 	int ID;
 	int DMG;
-	animation animation;
+	Animation animation;
+	Mix_Chunk *impact_sound;
 	float recharge;
 	_Bool using;
 	float attackdelay;
 	SDL_Rect rectangle;
 	SDL_Texture *texture;
-}item;
+}Item;
 
-typedef struct objects{
+typedef struct Objects{
 	int HP;
 	int DMG;
-	short int LVL;
+	int LVL;
 	int ID;
 	int XP;
 	float movespeed;
@@ -34,18 +36,18 @@ typedef struct objects{
 	int takendamage;
 	Uint64 attackrecharge;
 	char relation;
-	item weapon;
-	animation animation;
+	Item weapon;
+	Animation animation;
 	SDL_Rect damageEffectRect;
 	SDL_Texture *damageEffectTexture;
 	SDL_Rect rectangle;
 	SDL_Texture *texture, *death;
-}object;
+}Object;
 
-typedef struct element{
-	object data;
-    struct element *next, *previous, *head, *tail;
-}container;
+typedef struct Element{
+	Object data;
+    struct Element *next, *previous, *head, *tail;
+}Container;
 
 
 #endif /* TYPES_H_ */

@@ -3,7 +3,7 @@
 #define SOUNDS_H_
 #include <SDL_mixer.h>
 
-void load_sounds();
+void loadSounds();
 
 Mix_Music *main_theme;
 

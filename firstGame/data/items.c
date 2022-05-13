@@ -1,8 +1,8 @@
 #include "items.h"
 
-void load_items(){
+void loadItems(){
 
-	weapons = newcontainer();
+	weapons = newContainer();
 
 	//weapons
 	hand.ID = -2;
@@ -27,7 +27,7 @@ void load_items(){
 	initial_sword.animation.angle = 360;
 	initial_sword.using = 0;
 	weapon_object.weapon = initial_sword;
-	addtolist(&weapons, weapon_object, 0);
+	addToList(&weapons, weapon_object, 0);
 
 	goblin_stick.ID = 1;
 	goblin_stick.DMG = 1;
@@ -40,7 +40,7 @@ void load_items(){
 	goblin_stick.animation.angle = 360;
 	goblin_stick.using = 0;
 	weapon_object.weapon = goblin_stick;
-	addlast(&weapons, weapon_object);
+	addLast(&weapons, weapon_object);
 
 	GMS.ID = 2;
 	GMS.DMG = 30;
@@ -53,7 +53,7 @@ void load_items(){
 	GMS.animation.angle = 360;
 	GMS.using = 0;
 	weapon_object.weapon = GMS;
-	addlast(&weapons, weapon_object);
+	addLast(&weapons, weapon_object);
 
 	souls_slayer.ID = 257;
 	souls_slayer.DMG = 257;

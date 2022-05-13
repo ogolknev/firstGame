@@ -8,54 +8,54 @@
 
 
 
-container *newcontainer();
+Container *newContainer();
 
 //checking if the container is empty
-int is_empty(container **headcontainer);
+int isEmpty(Container **headcontainer);
 
 //counting container elements
-int element_count(container **headcontainer);
+int elementCount(Container **headcontainer);
 
 //stack
 
 //function to add a new element to the stack
-void addtostack(container **headstack, object data);
+void addToStack(Container **headstack, Object data);
 
 //function to pop an element from the stack
-object getstack(container **headstack);
+Object getStack(Container **headstack);
 
 
 //queue
 
 //function to add a new element to the queue
-void addtoqueue(container **headqueue, object data);
+void addToQueue(Container **headqueue, Object data);
 
 //function to pop an element from the queue
-object getqueue(container **headqueue);
+Object getQueue(Container **headqueue);
 
 
 //list
 
 //function to add a new element to the beginning of the list
-void addfirst(container **headlist, object data);
+void addFirst(Container **headlist, Object data);
 
 //function to add a new element to the end of the list
-void addlast(container **headlist, object data);
+void addLast(Container **headlist, Object data);
 
 //function to add a new element after the specified number
-void addtolist(container **headlist, object data, int number);
+void addToList(Container **headlist, Object data, int number);
 
 //function to remove a new element to the beginning of the list
-void delfirst(container **headlist);
+void delFirst(Container **headlist);
 
 //function to remove a new element to the end of the list
-void dellast(container **headlist);
+void delLast(Container **headlist);
 
 //function to remove the specified element
-void delelement(container **headlist, int number);
+void delElement(Container **headlist, int number);
 
 
 //function to get the address of the specified element
-container *getlist(container **headlist, int number);
+Container *getList(Container **headlist, int number);
 
 #endif /* CONTAINERS_H_ */

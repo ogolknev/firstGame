@@ -4,20 +4,20 @@
 #include "textures.h"
 #include "items.h"
 
-void load_objects();
+void loadObjects();
 
 //entities
-object player;
+Object player;
 
-object goblin;
+Object goblin;
 
-object alien;
+Object alien;
 
 //objects
-object stan;
+Object stan;
 
-object barrel;
+Object barrel;
 
-object item_object;
+Object item_object;
 
 #endif /* OBJECTS_H_ */

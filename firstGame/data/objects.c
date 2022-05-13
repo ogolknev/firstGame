@@ -1,6 +1,6 @@
 #include "objects.h"
 
-void load_objects(){
+void loadObjects(){
 
 	//entities
 	player.LVL = 0;

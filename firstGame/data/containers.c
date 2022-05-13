@@ -2,19 +2,19 @@
 #include "containers.h"
 
 
-container *newcontainer(){
-	extraContainer2 = malloc(sizeof(container));
-	extraContainer2->next = NULL;
-	extraContainer2->head = NULL;
-	extraContainer2->tail = NULL;
-	extraContainer2->previous = NULL;
-    return extraContainer2;
+Container *newContainer(){
+	Container *new_container = malloc(sizeof(Container));
+	new_container->next = NULL;
+	new_container->head = NULL;
+	new_container->tail = NULL;
+	new_container->previous = NULL;
+    return new_container;
 }
 
 //checking if the container is empty
-int is_empty(container **headcontainer){
-	extraContainer2 = *headcontainer;
-    if(extraContainer2->head == NULL){
+int isEmpty(Container **headcontainer){
+	Container *pointer = *headcontainer;
+    if(pointer->head == NULL){
         return 0;
     }
     else{
@@ -23,18 +23,18 @@ int is_empty(container **headcontainer){
 }
 
 //counting container elements
-int element_count(container **headcontainer){
-	extraContainer2 = *headcontainer;
-	counter3 = 0;
-    if(is_empty(&extraContainer2) == 0){
+int elementCount(Container **headcontainer){
+	Container *pointer = *headcontainer;
+	int counter = 0;
+    if(isEmpty(&pointer) == 0){
         return 0;
     }
     else{
-        while (extraContainer2 != NULL){
-        	counter3++;
-        	extraContainer2 = extraContainer2->next;
+        while (pointer != NULL){
+        	counter++;
+        	pointer = pointer->next;
         }
-        return counter3;
+        return counter;
     }
 }
 
@@ -42,241 +42,242 @@ int element_count(container **headcontainer){
 //stack
 
 //function to add a new element to the stack
-void addtostack(container **headstack, object data){
-	addElement = newcontainer();
-    extraContainer2 = *headstack;
-    if(element_count(&extraContainer2) == 0){
-    	addElement->data = data;
-    	addElement->head = addElement;
-    	addElement->tail = addElement;
-        extraContainer2 = addElement;
+void addToStack(Container **headstack, Object data){
+	Container *new_element = newContainer();
+	Container *pointer = *headstack;
+    if(elementCount(&pointer) == 0){
+    	new_element->data = data;
+    	new_element->head = new_element;
+    	new_element->tail = new_element;
+    	pointer = new_element;
     }
     else{
-    	addElement->data = data;
-    	addElement->head = addElement;
-    	addElement->next = extraContainer2;
-    	addElement->tail = extraContainer2->tail;
-        extraContainer2->previous = addElement;
-        while (extraContainer2 != NULL){
-        	extraContainer2->head = addElement;
-        	extraContainer2 = extraContainer2->next;
+    	new_element->data = data;
+    	new_element->head = new_element;
+    	new_element->next = pointer;
+    	new_element->tail = pointer->tail;
+    	pointer->previous = new_element;
+        while (pointer != NULL){
+        	pointer->head = new_element;
+        	pointer = pointer->next;
         }
-        extraContainer2 = addElement;
+        pointer = new_element;
     }
-    *headstack = extraContainer2;
+    *headstack = pointer;
 }
 
 //function to pop an element from the stack
-object getstack(container **headstack){
-	extraContainer2 = *headstack;
-	extraObject2 = extraContainer2->data;
-    if (element_count(&extraContainer2) == 1){
-    	extraContainer2->next = NULL;
-    	extraContainer2->head = NULL;
-    	extraContainer2->tail = NULL;
-    	extraContainer2->previous = NULL;
-    } else if (element_count(&extraContainer2) > 1){
-    	extraContainer2 = extraContainer2->next;
-    	extraContainer2->head = extraContainer2;
-    	extraContainer2->previous = NULL;
-        while (extraContainer2->next != NULL){
-        	extraContainer2 = extraContainer2->next;
-        	extraContainer2->head = extraContainer2->previous->head;
+Object getStack(Container **headstack){
+	Container *pointer = *headstack;
+	Object get_object = pointer->data;
+    if (elementCount(&pointer) == 1){
+    	pointer->next = NULL;
+    	pointer->head = NULL;
+    	pointer->tail = NULL;
+    	pointer->previous = NULL;
+    } else if (elementCount(&pointer) > 1){
+    	pointer = pointer->next;
+    	pointer->head = pointer;
+    	pointer->previous = NULL;
+        while (pointer->next != NULL){
+        	pointer = pointer->next;
+        	pointer->head = pointer->previous->head;
         }
-        extraContainer2 = extraContainer2->head;
-        *headstack = extraContainer2;
+        pointer = pointer->head;
+        *headstack = pointer;
     }
-    return extraObject2;
+    return get_object;
 }
 
 
 //queue
 
 //function to add a new element to the queue
-void addtoqueue(container **headqueue, object data){
-	addElement = newcontainer();
-    extraContainer2 = *headqueue;
-    if(element_count(&extraContainer2) == 0){
-    	addElement->data = data;
-    	addElement->head = addElement;
-    	addElement->tail = addElement;
-        extraContainer2 = addElement;
+void addToQueue(Container **headqueue, Object data){
+	Container *new_element = newContainer();
+	Container *pointer = *headqueue;
+    if(elementCount(&pointer) == 0){
+    	new_element->data = data;
+    	new_element->head = new_element;
+    	new_element->tail = new_element;
+    	pointer = new_element;
     }
     else{
-    	addElement->data = data;
-    	addElement->head = addElement;
-    	addElement->next = extraContainer2;
-    	addElement->tail = extraContainer2->tail;
-        extraContainer2->previous = addElement;
-        while (extraContainer2 != NULL){
-        	extraContainer2->head = addElement;
-        	extraContainer2 = extraContainer2->next;
+    	new_element->data = data;
+    	new_element->head = new_element;
+    	new_element->next = pointer;
+    	new_element->tail = pointer->tail;
+    	pointer->previous = new_element;
+        while (pointer != NULL){
+        	pointer->head = new_element;
+        	pointer = pointer->next;
         }
-        extraContainer2 = addElement;
+        pointer = new_element;
     }
-    *headqueue = extraContainer2;
+    *headqueue = pointer;
 }
 
 //function to pop an element from the queue
-object getqueue(container **headqueue){
-    extraContainer2 = *headqueue;
-    if (element_count(&extraContainer2) == 1){
-        extraObject2 = extraContainer2->data;
-        extraContainer2->next = NULL;
-        extraContainer2->head = NULL;
-        extraContainer2->tail = NULL;
-        extraContainer2->previous = NULL;
-    } else if (element_count(&extraContainer2) > 1){
-    	extraObject2 = extraContainer2->tail->data;
-        extraContainer2 = extraContainer2->tail->previous;
-        extraContainer2->tail = extraContainer2;
-        extraContainer2->next = NULL;
-        while (extraContainer2->previous != NULL){
-        	extraContainer2 = extraContainer2->previous;
-        	extraContainer2->tail = extraContainer2->next->tail;
+Object getQueue(Container **headqueue){
+	Container *pointer = *headqueue;
+	Object get_object;
+    if (elementCount(&pointer) == 1){
+    	get_object = pointer->data;
+        pointer->next = NULL;
+        pointer->head = NULL;
+        pointer->tail = NULL;
+        pointer->previous = NULL;
+    } else if (elementCount(&pointer) > 1){
+    	get_object = pointer->tail->data;
+    	pointer = pointer->tail->previous;
+    	pointer->tail = pointer;
+    	pointer->next = NULL;
+        while (pointer->previous != NULL){
+        	pointer = pointer->previous;
+        	pointer->tail = pointer->next->tail;
         }
-        extraContainer2 = extraContainer2->head;
-        *headqueue = extraContainer2;
+        pointer = pointer->head;
+        *headqueue = pointer;
     }
-    return extraObject2;
+    return get_object;
 }
 
 
 //list
 
 //function to add a new element to the beginning of the list
-void addfirst(container **headlist, object data){
-    extraContainer2 = *headlist;
-    addElement = newcontainer();
-    addElement->data = data;
-    addElement->next = extraContainer2;
-    addElement->head = addElement;
-    extraContainer2->previous = addElement;
-    while (extraContainer2 != NULL){
-    	extraContainer2->head = addElement;
-    	extraContainer2 = extraContainer2->next;
+void addFirst(Container **headlist, Object data){
+	Container *pointer = *headlist;
+	Container *new_element = newContainer();
+	new_element->data = data;
+	new_element->next = pointer;
+	new_element->head = new_element;
+    pointer->previous = new_element;
+    while (pointer != NULL){
+    	pointer->head = new_element;
+    	pointer = pointer->next;
     }
-    *headlist = addElement;
+    *headlist = new_element;
 }
 
 //function to add a new element to the end of the list
-void addlast(container **headlist, object data){
-    extraContainer3 = *headlist;
-    addElement = newcontainer();
-    addElement->data = data;
-    addElement->head = extraContainer3->head;
-    while(extraContainer3->next != NULL){
-    	extraContainer3 = extraContainer3->next;
+void addLast(Container **headlist, Object data){
+	Container *pointer = *headlist;
+	Container *new_element = newContainer();
+	new_element->data = data;
+	new_element->head = pointer->head;
+    while(pointer->next != NULL){
+    	pointer = pointer->next;
     }
-    extraContainer3->next = addElement;
-    addElement->previous = extraContainer3;
-    extraContainer3 = extraContainer3->head;
-    *headlist = extraContainer3;
+    pointer->next = new_element;
+    new_element->previous = pointer;
+    pointer = pointer->head;
+    *headlist = pointer;
 }
 
 //function to add a new element after the specified number
-void addtolist(container **headlist, object data, int number){
-    addElement = newcontainer();
-    extraContainer2 = *headlist;
-    if(element_count(&extraContainer2) == 0){
-    	addElement->data = data;
-    	addElement->head = addElement;
-        extraContainer2 = addElement;
+void addToList(Container **headlist, Object data, int number){
+	Container *pointer = *headlist;
+	Container *new_element = newContainer();
+    if(elementCount(&pointer) == 0){
+    	new_element->data = data;
+    	new_element->head = new_element;
+    	pointer = new_element;
     }
     else if(number == -1){
-        addfirst(&extraContainer2, data);
+        addFirst(&pointer, data);
     }
-    else if(number == element_count(&extraContainer2) - 1){
-        addlast(&extraContainer2, data);
+    else if(number == elementCount(&pointer) - 1){
+        addLast(&pointer, data);
     }
     else{
-    	counter2 = 0;
-        while(extraContainer2->next != NULL){
-            if (counter2 == number){
-            	addElement->data = data;
-            	addElement->head = extraContainer2->head;
-            	addElement->previous = extraContainer2;
-            	addElement->next = extraContainer2->next;
-                extraContainer2->next->previous = addElement;
-                extraContainer2->next = addElement;
+    	int counter = 0;
+        while(pointer->next != NULL){
+            if (counter == number){
+            	new_element->data = data;
+            	new_element->head = pointer->head;
+            	new_element->previous = pointer;
+            	new_element->next = pointer->next;
+            	pointer->next->previous = new_element;
+            	pointer->next = new_element;
             }
-            counter2++;
-            extraContainer2 = extraContainer2->next;
+            counter++;
+            pointer = pointer->next;
         }
-        extraContainer2 = extraContainer2->head;
+        pointer = pointer->head;
     }
-    *headlist = extraContainer2;
+    *headlist = pointer;
 }
 
 //function to remove a new element to the beginning of the list
-void delfirst(container **headlist){
-    extraContainer2 = *headlist;
-    extraContainer2 = extraContainer2->next;
-    free(extraContainer2->previous);
-    extraContainer2->head = extraContainer2;
-    extraContainer2->previous = NULL;
-    while (extraContainer2->next != NULL){
-    	extraContainer2 = extraContainer2->next;
-    	extraContainer2->head = extraContainer2->previous->head;
+void delFirst(Container **headlist){
+	Container *pointer = *headlist;
+	pointer = pointer->next;
+    free(pointer->previous);
+    pointer->head = pointer;
+    pointer->previous = NULL;
+    while (pointer->next != NULL){
+    	pointer = pointer->next;
+    	pointer->head = pointer->previous->head;
     }
-    extraContainer2 = extraContainer2->head;
-    *headlist = extraContainer2;
+    pointer = pointer->head;
+    *headlist = pointer;
 }
 
 //function to remove a new element to the end of the list
-void dellast(container **headlist){
-	extraContainer2 = *headlist;
-    while (extraContainer2->next->next != NULL) {
-    	extraContainer2 = extraContainer2->next;
+void delLast(Container **headlist){
+	Container *pointer = *headlist;
+    while (pointer->next->next != NULL) {
+    	pointer = pointer->next;
     }
-    free(extraContainer2->next);
-    extraContainer2->next = NULL;
-    extraContainer2 = extraContainer2->head;
-    *headlist = extraContainer2;
+    free(pointer->next);
+    pointer->next = NULL;
+    pointer = pointer->head;
+    *headlist = pointer;
 }
 
 //function to remove the specified element
-void delelement(container **headlist, int number){
-	extraContainer3 = *headlist;
-    counter2 = 0;
+void delElement(Container **headlist, int number){
+	Container *pointer = *headlist;
+    int counter = 0;
     if(number == 0){
-        delfirst(&extraContainer3);
+        delFirst(&pointer);
     }
-    else if(number == element_count(&extraContainer3) - 1){
-        dellast(&extraContainer3);
+    else if(number == elementCount(&pointer) - 1){
+        delLast(&pointer);
     }
     else {
-        while (extraContainer3->next != NULL) {
-            if (counter2 == number) {
-            	extraContainer2 = extraContainer3;
-            	extraContainer3->previous->next = extraContainer3->next;
-            	extraContainer3->next->previous = extraContainer3->previous;
-            	counter2++;
-                extraContainer3 = extraContainer3->next;
-                free(extraContainer2);
+        while (pointer->next != NULL) {
+            if (counter == number) {
+            	Container *extra_pointer = pointer;
+            	pointer->previous->next = pointer->next;
+            	pointer->next->previous = pointer->previous;
+            	counter++;
+            	pointer = pointer->next;
+                free(extra_pointer);
 
             }
             else{
-            	counter2++;
-            	extraContainer3 = extraContainer3->next;
+            	counter++;
+            	pointer = pointer->next;
             }
         }
     }
-    extraContainer3 = extraContainer3->head;
-    *headlist = extraContainer3;
+    pointer = pointer->head;
+    *headlist = pointer;
 }
 
 
 //function to get the address of the specified element
-container *getlist(container **headlist, int number){
-	extraContainer2 = *headlist;
-    counter = 0;
-    while (extraContainer2 != NULL){
+Container *getList(Container **headlist, int number){
+	Container *pointer = *headlist;
+    int counter = 0;
+    while (pointer != NULL){
         if(number == counter){
-            return extraContainer2;
+            return pointer;
         }
         counter++;
-        extraContainer2 = extraContainer2->next;
+        pointer = pointer->next;
     }
-    return extraContainer2;
+    return pointer;
 }

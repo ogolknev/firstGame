@@ -5,23 +5,23 @@
 #include "textures.h"
 #include "containers.h"
 
-void load_items();
+void loadItems();
 
-container *weapons;
+Container *weapons;
 
-object weapon_object;
+Object weapon_object;
 
 
 //weapons
-item hand;
+Item hand;
 
-item initial_sword;
+Item initial_sword;
 
-item goblin_stick;
+Item goblin_stick;
 
-item GMS;
+Item GMS;
 
-item souls_slayer;
+Item souls_slayer;
 
 
 #endif /* ITEMS_H_ */

@@ -16,45 +16,45 @@
 
 int initSDL();
 
-int digit_count(int number);
+int digitCount(int number);
 
-int limitedrandom(int botEdge, int topEdge, int extra);
+int limitedRandom(int bot_edge, int top_edge, int extravar);
 
-void spawn(object object, container **headcontainer, SDL_Rect bgrect, int x, int y);
+void spawn(Object object, Container **headcontainer, SDL_Rect bgrect, int x, int y);
 
-void item_spawn(item item, container **headcontainer, SDL_Rect bgrect, int x, int y);
+void itemSpawn(Item item, Container **headcontainer, SDL_Rect bgrect, int x, int y);
 
-void randSpawn(object object, container **headcontainer, SDL_Rect bgrect, int extra);
+void randSpawn(Object object, Container **headcontainer, SDL_Rect bgrect, int extravar);
 
-void multiSpawn(container **headcontainer, object object, SDL_Rect bgrect, int number);
+void multiSpawn(Container **headcontainer, Object object, SDL_Rect bgrect, int number);
 
-SDL_Texture *newtext(char *text, SDL_Renderer *render, int red, int green, int blue);
+SDL_Texture *newText(char *text, int red, int green, int blue);
 
-int *calculateTrafficBans(object entity, container **headcontainer);
+int *calculateTrafficBans(Object entity, Container **headcontainer);
 
-int calculatechasing(int *unmoving, object entity, container **headcontainer);
+int calculateChasing(int *unmoving, Object entity, Container **headcontainer);
 
-int calculateEntityMoving(object entity, container **headcontainer, int randvar);
+int calculateEntityMoving(Object entity, Container **headcontainer, int randvar);
 
-object entityMoving(object entity, container **headcontainer, int randvar);
+Object entityMoving(Object entity, Container **headcontainer, int randvar);
 
-object playerMoving(object prect, int *trafficbans, const Uint8 *keyboardState);
+Object playerMoving(Object prect, int *trafficbans, const Uint8 *keyboard_state);
 
-container *attack(int attackernumber, container **headcontainer);
+Container *attack(int attacker_number, Container **headcontainer);
 
-container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path);
+Container *loadMap(Container **headcontainer, SDL_Rect background_rect, char *path);
 
-void take_weapon(int number, container **headcontainer);
+void takeWeapon(int number, Container **headcontainer);
 
-void LVLup(int number, container **headcontainer);
+void lvlUp(int number, Container **headcontainer);
 
-void attackanimation(object *attacker, SDL_RendererFlip flip);
+void attackAnimation(Object *attacker, SDL_RendererFlip flip);
 
-void switch_layers();
+void switchLayers();
 
-void mainmenu();
+void pauseMenu();
 
-void maingame();
+void game();
 
 
 #endif /* MAIN_FUNCTIONS_H_ */

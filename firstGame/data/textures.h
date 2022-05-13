@@ -5,12 +5,16 @@
 #include <SDL_image.h>
 #include "variables.h"
 
-void load_textures();
+void loadTextures();
 
+//interface
+SDL_Texture *button512_txtr;
+SDL_Rect button512_rct;
+SDL_Rect button512_state;
 
 //background
-SDL_Texture *backgroundTexture;
-SDL_Rect backgroundRect;
+SDL_Texture *background_txtr;
+SDL_Rect background_rct;
 
 
 //unalive
