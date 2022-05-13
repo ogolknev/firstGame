@@ -16,6 +16,8 @@ object alien;
 //objects
 object stan;
 
+object barrel;
+
 object item_object;
 
 #endif /* OBJECTS_H_ */

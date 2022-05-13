@@ -17,6 +17,6 @@
 #include "items.h"
 #include "main_functions.h"
 #include "objects.h"
-
+#include "sounds.h"
 
 #endif /* INCLUDES_H_ */

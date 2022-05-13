@@ -16,6 +16,10 @@ void load_textures(){
 	stan0_Rct.h = cellsize;
 	stan0_Rct.w = cellsize;
 
+	barrel0_Txtr = IMG_LoadTexture(mainRender,"textures/barrel.png");
+	barrel0_Rct.h = cellsize;
+	barrel0_Rct.w = cellsize;
+
 
 	//entities
 	playerTexture = IMG_LoadTexture(mainRender,"textures/helmet1.png");
@@ -57,9 +61,9 @@ void load_textures(){
 	weapon2_Rct.h = cellsize;
 	weapon2_Rct.w = cellsize;
 
-	weapon4_Txtr = IMG_LoadTexture(mainRender, "textures/souls_slayer.png");
-	weapon4_Rct.h = cellsize;
-	weapon4_Rct.w = cellsize;
+	weapon257_Txtr = IMG_LoadTexture(mainRender, "textures/souls_slayer.png");
+	weapon257_Rct.h = cellsize;
+	weapon257_Rct.w = cellsize;
 
 
 }

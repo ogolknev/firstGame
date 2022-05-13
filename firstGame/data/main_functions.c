@@ -27,8 +27,8 @@ int digit_count(int number){
 
 
 int limitedrandom(int botEdge, int topEdge, int extra){
-	extravar2 = time(NULL);
-	srand(extravar2 + extra);
+	int extravar = time(NULL);
+	srand(extravar + extra);
 	return botEdge + (rand() % (topEdge - botEdge));
 }
 
@@ -65,7 +65,7 @@ void randSpawn(object object, container **headcontainer, SDL_Rect bgrect, int ex
 }
 
 
-void multiSpawn(SDL_Renderer *render, container **headcontainer, object object, SDL_Rect bgrect, int number){
+void multiSpawn(container **headcontainer, object object, SDL_Rect bgrect, int number){
 	extraContainer = *headcontainer;
 	for(j = 0; j < number; j++){
 		randSpawn(object, &extraContainer, bgrect, j + 1);
@@ -95,7 +95,7 @@ int *calculateTrafficBans(object entity, container **headcontainer){
 	for(j = 0; j < element_count(&extraContainer); j++){
 		if(abs(entity.rectangle.x - getlist(&extraContainer, j)->data.rectangle.x) <= 32
 		&& abs(entity.rectangle.y - getlist(&extraContainer, j)->data.rectangle.y) <= 32
-		&& getlist(&extraContainer, j)->data.LVL > -1 ){
+		&& getlist(&extraContainer, j)->data.LVL != -1 && getlist(&extraContainer, j)->data.LVL != -2 ){
 			if(entity.rectangle.x - getlist(&extraContainer, j)->data.rectangle.x == 32){
 				if(entity.rectangle.y == getlist(&extraContainer, j)->data.rectangle.y){
 					unmoving[3] = 4;
@@ -237,7 +237,7 @@ int calculateEntityMoving(object entity, container **headcontainer, int randvar)
 					extravar++;
 				}
 			}
-			return unmoving[limitedrandom(0,extravar + 1, time(NULL) * randvar * extravar * entity.ID)];
+			return unmoving[limitedrandom(0,extravar + 1, randvar * entity.ID)];
 		}
 		else return calculatechasing(unmoving, entity, &extraContainer);
 	}
@@ -386,12 +386,27 @@ container *attack(int attackernumber, container **headcontainer){
 				getlist(&extraContainer, j)->data.animation.animationRect.h = 12;
 				if(extraObject.ID == -1 && getlist(&extraContainer, j)->data.relation > -1) getlist(&extraContainer, j)->data.relation--;
 				if(getlist(&extraContainer, j)->data.HP <= 0){
-					getlist(&extraContainer, j)->data.animation.timer[2] = currenttime;
-					getlist(&extraContainer, attackernumber)->data.XP += getlist(&extraContainer, j)->data.LVL * 100;
-					getlist(&extraContainer, j)->data.LVL = -1;
-					getlist(&extraContainer, j)->data.direction = -1;
-					getlist(&extraContainer, j)->data.HP = -2;
-					getlist(&extraContainer, j)->data.texture = getlist(&extraContainer, j)->data.death;
+					if(getlist(&extraContainer, j)->data.LVL == -3){
+
+						getlist(&extraContainer, j)->data.animation.timer[2] = currenttime;
+						getlist(&extraContainer, j)->data.LVL = -1;
+						getlist(&extraContainer, j)->data.HP = -2;
+						getlist(&extraContainer, j)->data.texture = getlist(&extraContainer, j)->data.death;
+						if(getlist(&extraContainer, j)->data.weapon.ID != -1){
+							printf("yes\n");
+							item_spawn(getlist(&extraContainer, j)->data.weapon, &objects, backgroundRect,
+							(getlist(&extraContainer, j)->data.rectangle.x - backgroundRect.x)/cellsize,
+							(getlist(&extraContainer, j)->data.rectangle.y - backgroundRect.y)/cellsize);
+						}
+					}
+					else{
+						getlist(&extraContainer, j)->data.animation.timer[2] = currenttime;
+						getlist(&extraContainer, attackernumber)->data.XP += getlist(&extraContainer, j)->data.LVL * 100;
+						getlist(&extraContainer, j)->data.LVL = -1;
+						getlist(&extraContainer, j)->data.direction = -1;
+						getlist(&extraContainer, j)->data.HP = -2;
+						getlist(&extraContainer, j)->data.texture = getlist(&extraContainer, j)->data.death;
+					}
 				}
 			}
 		}
@@ -414,6 +429,16 @@ container *loadmap(container **headcontainer, SDL_Rect bgrect, char *path){
 				extraObject.ID = element_count(&extraContainer);
 				addlast(&extraContainer, extraObject);
 			}
+			if(extraSymbol == 'o'){
+				extraObject = barrel;
+				extraObject.weapon = getlist(&weapons, limitedrandom(0, element_count(&weapons)- 1, element_count(&extraContainer)))->data.weapon;
+				extraObject.rectangle.x = bgrect.x + extravar * cellsize;
+				extraObject.rectangle.y = bgrect.y + extravar2 * cellsize;
+				extraObject.ID = element_count(&extraContainer);
+				printf("YAAA");
+				addlast(&extraContainer, extraObject);
+			}
+
 			extravar++; //x
 			fscanf(extraStream, "%c", &extraSymbol);
 		}
@@ -467,9 +492,52 @@ void attackanimation(object *attacker, SDL_RendererFlip flip){
 					 &extraPoint, flip);
 }
 
+void switch_layers(){
 
+}
+
+void mainmenu( SDL_Texture *text){
+	if(Mix_PlayingMusic() == 0) Mix_PlayMusic(main_theme, -1);
+	extraRect2.x = 64;
+	extraRect2.y = 128;
+	extraRect2.h = 64;
+	extraRect2.w = 512;
+	SDL_SetRenderDrawColor(mainRender, 150, 150 ,150 ,0);
+	SDL_RenderFillRect(mainRender, &extraRect2);
+	extraRect2.w = 384;
+	extraRect2.x = 128;
+	SDL_RenderCopy(mainRender, text, NULL, &extraRect2);
+
+	if(x >= 64 && x <= 576 && y >= 128 && y <= 192){
+		extraRect2.w = 512;
+		extraRect2.x = 64;
+		SDL_SetRenderDrawColor(mainRender, 90, 90 ,90 ,0);
+		SDL_RenderFillRect(mainRender, &extraRect2);
+		extraRect2.x = 128;
+		extraRect2.w = 384;
+		SDL_RenderCopy(mainRender, text, NULL, &extraRect2);
+		if(mousestate == SDL_BUTTON_LMASK || mousestate == SDL_BUTTON_RMASK){
+			extraRect2.x = 64;
+			extraRect2.w = 512;
+			SDL_SetRenderDrawColor(mainRender, 30, 30 ,30 ,0);
+			SDL_RenderFillRect(mainRender, &extraRect2);
+			extraRect2.x = 128;
+			extraRect2.w = 384;
+			SDL_RenderCopy(mainRender, text, NULL, &extraRect2);
+		}
+		if(mainEvent->button.type == SDL_MOUSEBUTTONUP){
+			layer = 1;
+			Mix_HaltMusic();
+		}
+	}
+
+	SDL_SetRenderDrawColor(mainRender, 255, 255 ,255 ,0);
+}
 
 void maingame(){
+	SDL_RenderCopy(mainRender, backgroundTexture, NULL, &backgroundRect);
+
+
 	//rendering unalive
 	for(i = 0; i < element_count(&objects) ; i++){
 		extraRect = getlist(&objects, i)->data.rectangle;

@@ -73,6 +73,17 @@ void load_objects(){
 	stan.texture = stan0_Txtr;
 	stan.rectangle = stan0_Rct;
 
+	barrel.HP = 20;
+	barrel.LVL = -3;
+	barrel.DMG = -1;
+	barrel.direction = -1;
+	barrel.restofway = 0;
+	barrel.takendamage = 0;
+	barrel.texture = barrel0_Txtr;
+	barrel.rectangle = barrel0_Rct;
+	barrel.weapon.ID = -1;
+
+
 	item_object.HP = -1;
 	item_object.LVL = -2;
 	item_object.XP = 0;

@@ -5,11 +5,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_timer.h>
+#include <SDL_mixer.h>
 #include <math.h>
 #include "types.h"
 #include "variables.h"
 #include "containers.h"
 #include "objects.h"
+#include "sounds.h"
 
 
 int initSDL();
@@ -24,7 +26,7 @@ void item_spawn(item item, container **headcontainer, SDL_Rect bgrect, int x, in
 
 void randSpawn(object object, container **headcontainer, SDL_Rect bgrect, int extra);
 
-void multiSpawn(SDL_Renderer *render, container **headcontainer, object object, SDL_Rect bgrect, int number);
+void multiSpawn(container **headcontainer, object object, SDL_Rect bgrect, int number);
 
 SDL_Texture *newtext(char *text, SDL_Renderer *render, int red, int green, int blue);
 
@@ -47,6 +49,10 @@ void take_weapon(int number, container **headcontainer);
 void LVLup(int number, container **headcontainer);
 
 void attackanimation(object *attacker, SDL_RendererFlip flip);
+
+void switch_layers();
+
+void mainmenu();
 
 void maingame();
 

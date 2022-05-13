@@ -3,8 +3,13 @@
 #define ITEMS_H_
 #include "types.h"
 #include "textures.h"
+#include "containers.h"
 
 void load_items();
+
+container *weapons;
+
+object weapon_object;
 
 
 //weapons

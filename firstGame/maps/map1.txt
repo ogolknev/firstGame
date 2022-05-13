@@ -1,7 +1,7 @@
 xxxxxxxxxxxxxxxxxxxx\
 x                  x\
-x                  x\
-x                  x\
+x   oo             x\
+x   oo             x\
 x                  x\
 x                  x\
 x                  x\

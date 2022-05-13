@@ -2,8 +2,10 @@
 
 void load_items(){
 
+	weapons = newcontainer();
+
 	//weapons
-	hand.ID = 3;
+	hand.ID = -2;
 	hand.DMG = 0;
 	hand.recharge = 70;
 	hand.attackdelay = 0.3;
@@ -24,6 +26,8 @@ void load_items(){
 	initial_sword.animation.center.y = 0;
 	initial_sword.animation.angle = 360;
 	initial_sword.using = 0;
+	weapon_object.weapon = initial_sword;
+	addtolist(&weapons, weapon_object, 0);
 
 	goblin_stick.ID = 1;
 	goblin_stick.DMG = 1;
@@ -35,6 +39,8 @@ void load_items(){
 	goblin_stick.animation.center.y = 0;
 	goblin_stick.animation.angle = 360;
 	goblin_stick.using = 0;
+	weapon_object.weapon = goblin_stick;
+	addlast(&weapons, weapon_object);
 
 	GMS.ID = 2;
 	GMS.DMG = 30;
@@ -46,13 +52,15 @@ void load_items(){
 	GMS.animation.center.y = 0;
 	GMS.animation.angle = 360;
 	GMS.using = 0;
+	weapon_object.weapon = GMS;
+	addlast(&weapons, weapon_object);
 
-	souls_slayer.ID = 4;
+	souls_slayer.ID = 257;
 	souls_slayer.DMG = 257;
 	souls_slayer.recharge = 50;
 	souls_slayer.attackdelay = 0.1;
-	souls_slayer.texture = weapon4_Txtr;
-	souls_slayer.rectangle = weapon4_Rct;
+	souls_slayer.texture = weapon257_Txtr;
+	souls_slayer.rectangle = weapon257_Rct;
 	souls_slayer.animation.center.x = cellsize / 2;
 	souls_slayer.animation.center.y = 0;
 	souls_slayer.animation.angle = 360;
