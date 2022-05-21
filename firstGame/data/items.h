@@ -21,7 +21,11 @@ Item goblin_stick;
 
 Item GMS;
 
+Item blood_scythe;
+
 Item souls_slayer;
+
+Item blood_sword;
 
 
 #endif /* ITEMS_H_ */

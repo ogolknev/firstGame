@@ -6,6 +6,7 @@
 #include <SDL_image.h>
 #include <SDL_timer.h>
 #include <SDL_mixer.h>
+#include <string.h>
 #include <math.h>
 #include "types.h"
 #include "variables.h"
@@ -34,9 +35,9 @@ int *calculateTrafficBans(Object entity, Container **headcontainer);
 
 int calculateChasing(int *unmoving, Object entity, Container **headcontainer);
 
-int calculateEntityMoving(Object entity, Container **headcontainer, int randvar);
+int calculateEntityMoving(Object entity_i, Container **head_container, int randvar);
 
-Object entityMoving(Object entity, Container **headcontainer, int randvar);
+Object entityMoving(Object entity_i, Container **headcontainer, int randvar);
 
 Object playerMoving(Object prect, int *trafficbans, const Uint8 *keyboard_state);
 
@@ -50,9 +51,21 @@ void lvlUp(int number, Container **headcontainer);
 
 void attackAnimation(Object *attacker, SDL_RendererFlip flip);
 
-void switchLayers();
+int switchLayers(int arg);
+
+int save();
+
+int load();
+
+_Bool createButton(char * text, int x, int y, int func(), int arg);
+
+_Bool createButtonSwitch(char * text1, char * text2, int x, int y, int func(), int arg);
+
+void loadSettings();
 
 void pauseMenu();
+
+void settingsMenu();
 
 void game();
 

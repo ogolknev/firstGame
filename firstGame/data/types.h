@@ -16,7 +16,7 @@ typedef struct Items{
 	Animation animation;
 	Mix_Chunk *impact_sound;
 	float recharge;
-	_Bool using;
+	int using;
 	float attackdelay;
 	SDL_Rect rectangle;
 	SDL_Texture *texture;
@@ -26,16 +26,17 @@ typedef struct Objects{
 	int HP;
 	int DMG;
 	int LVL;
+	int object_ID;
 	int ID;
 	int XP;
 	float movespeed;
-	char direction;
-	char restofway;
+	int direction;
+	int restofway;
 	float pxpart;
 	int pxcount;
 	int takendamage;
 	Uint64 attackrecharge;
-	char relation;
+	int relation;
 	Item weapon;
 	Animation animation;
 	SDL_Rect damageEffectRect;
@@ -49,5 +50,11 @@ typedef struct Element{
     struct Element *next, *previous, *head, *tail;
 }Container;
 
+
+typedef struct SettingsConf{
+	int sound;
+	int resolution;
+	int fullscreen;
+}Settings;
 
 #endif /* TYPES_H_ */

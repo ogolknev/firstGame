@@ -187,7 +187,7 @@ void addToList(Container **headlist, Object data, int number){
     else if(number == -1){
         addFirst(&pointer, data);
     }
-    else if(number == elementCount(&pointer) - 1){
+    else if(number >= elementCount(&pointer) - 1){
         addLast(&pointer, data);
     }
     else{
@@ -227,12 +227,18 @@ void delFirst(Container **headlist){
 //function to remove a new element to the end of the list
 void delLast(Container **headlist){
 	Container *pointer = *headlist;
-    while (pointer->next->next != NULL) {
-    	pointer = pointer->next;
-    }
-    free(pointer->next);
-    pointer->next = NULL;
-    pointer = pointer->head;
+	if(elementCount(&pointer) == 1){
+		pointer->head = NULL;
+	}
+	else
+	{
+		while (pointer->next->next != NULL) {
+			pointer = pointer->next;
+		}
+		free(pointer->next);
+		pointer->next = NULL;
+		pointer = pointer->head;
+	}
     *headlist = pointer;
 }
 

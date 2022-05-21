@@ -16,7 +16,7 @@ void loadItems(){
 	hand.animation.angle = 360;
 	hand.using = 0;
 
-	initial_sword.ID = 0;
+	initial_sword.ID = 4;
 	initial_sword.DMG = 3;
 	initial_sword.recharge = 100;
 	initial_sword.attackdelay = 0.1;
@@ -53,6 +53,32 @@ void loadItems(){
 	GMS.animation.angle = 360;
 	GMS.using = 0;
 	weapon_object.weapon = GMS;
+	addLast(&weapons, weapon_object);
+
+	blood_scythe.ID = 3;
+	blood_scythe.DMG = 66;
+	blood_scythe.recharge = 99;
+	blood_scythe.attackdelay = 0.3;
+	blood_scythe.texture = weapon3_txtr;
+	blood_scythe.rectangle = weapon3_rct;
+	blood_scythe.animation.center.x = cellsize / 2;
+	blood_scythe.animation.center.y = 0;
+	blood_scythe.animation.angle = 360;
+	blood_scythe.using = 0;
+	weapon_object.weapon = blood_scythe;
+	addLast(&weapons, weapon_object);
+
+	blood_sword.ID = 4;
+	blood_sword.DMG = 33;
+	blood_sword.recharge = 66;
+	blood_sword.attackdelay = 0.22;
+	blood_sword.texture = weapon4_txtr;
+	blood_sword.rectangle = weapon4_rct;
+	blood_sword.animation.center.x = cellsize / 2;
+	blood_sword.animation.center.y = 0;
+	blood_sword.animation.angle = 360;
+	blood_sword.using = 0;
+	weapon_object.weapon = blood_sword;
 	addLast(&weapons, weapon_object);
 
 	souls_slayer.ID = 257;

@@ -20,4 +20,12 @@ Object barrel;
 
 Object item_object;
 
+Object bush0;
+
+Object bush1;
+
+Object bush2;
+
+Object bush3;
+
 #endif /* OBJECTS_H_ */

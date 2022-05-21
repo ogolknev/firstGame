@@ -6,5 +6,6 @@
 void loadSounds();
 
 Mix_Music *main_theme;
+Mix_Music *theme1;
 
 #endif /* SOUNDS_H_ */
